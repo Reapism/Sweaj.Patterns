@@ -18,6 +18,7 @@
   <ItemGroup>
     <Folder Include="Clients\" />
     <Folder Include="Data\ValueObjects\" />
+    <Folder Include="Exceptions\" />
     <Folder Include="Initializer\" />
     <Folder Include="Configuration\" />
     <Folder Include="Logging\" />
