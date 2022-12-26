@@ -1,38 +1,50 @@
-﻿using Ardalis.GuardClauses;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Sweaj.Patterns.Cache
 {
-    public sealed class CacheRequest
+    public sealed class CacheRequest<TValue>
     {
-        private CacheRequest(string cacheKey, ValueRetrievalMethod valueRetrievalMethod)
+        private CacheRequest(CacheKey cacheKey, ValueRetrievalMethod valueRetrievalMethod, TValue? value, Func<Task<TValue>>? valueFactory)
         {
-            Ardalis.GuardClauses.Guard.Against.NullOrWhiteSpace(cacheKey);
-
             CacheKey = cacheKey;
             ValueRetrievalMethod = valueRetrievalMethod;
+
             RequestId = Guid.NewGuid();
+            Value = value;
+            ValueFactory = valueFactory;
         }
 
         public Guid RequestId { get; }
-        public string CacheKey { get; }
+        public CacheKey CacheKey { get; }
         public ValueRetrievalMethod ValueRetrievalMethod { get; }
 
-        public static CacheRequest Create([NotNull, ValidatedNotNull] string cacheKey, [NotNull] ValueRetrievalMethod valueRetrievalMethod = ValueRetrievalMethod.Undefined)
+        public Func<Task<TValue>>? ValueFactory { get; }
+
+        public TValue? Value { get; }
+        public bool HasValueFactory()
         {
-            var request = new CacheRequest(cacheKey, valueRetrievalMethod);
+            return ValueRetrievalMethod is ValueRetrievalMethod.SafeGet or ValueRetrievalMethod.Update;
+        }
+
+        public static CacheRequest<T> SafeGet<T>(
+            [NotNull, ValidatedNotNull] CacheKey cacheKey, Func<Task<T>> valueFactory)
+        {
+            var request = new CacheRequest<T>(cacheKey, ValueRetrievalMethod.SafeGet, default, valueFactory);
 
             return request;
         }
 
-        public static implicit operator CacheRequest([CanBeNull, NotNull] string cachekey)
+        public static CacheRequest<T> Get<T>(
+            [NotNull, ValidatedNotNull] CacheKey cacheKey)
         {
-            return new CacheRequest(cachekey, ValueRetrievalMethod.Undefined);
+            var request = new CacheRequest<T>(cacheKey, ValueRetrievalMethod.Get, default, null);
+
+            return request;
         }
     }
 
     public interface ICacheKeyValidation
     {
-        bool Validate(Expression<Func<CacheRequest, bool>> predicate);
+        bool Validate<TValue>(Expression<Func<CacheRequest<TValue>, bool>> predicate);
     }
 }

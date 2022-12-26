@@ -1,6 +1,14 @@
 ﻿
 namespace Sweaj.Patterns.Cache
 {
+    public sealed class CacheOptions
+    {
+        public CacheOptions() { }
+
+        public CacheKeyFormat CacheKeyFormat { get; }
+        public CacheDurationOptions CacheDurationOptions { get; }
+    }
+
     public sealed class CacheKeyFormat
     {
         private CacheKeyFormat(string cacheKeyFormat)

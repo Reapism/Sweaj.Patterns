@@ -9,6 +9,7 @@
         }
 
         public string Value { get; }
+
         public static implicit operator CacheKey(string cacheKey)
         {
             return new CacheKey(cacheKey);
