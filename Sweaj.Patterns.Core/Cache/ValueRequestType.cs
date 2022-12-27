@@ -21,16 +21,16 @@
         Get = 2,
 
         /// <summary>
-        /// <see cref="Create"/> will add a new value into the cache that is just created in the
+        /// <see cref="Set"/> will add a new value into the cache that is just created in the
         /// underlying datastore.
         /// </summary>
-        Create = 3,
+        Set = 3,
 
         /// <summary>
-        /// <see cref="CreateIfNotExists"/> will only create a cache value if the value
+        /// <see cref="SafeSet"/> will only set a cache value if the value
         /// exists in the datastore.
         /// </summary>
-        SafeCreate = 4,
+        SafeSet = 4,
 
         /// <summary>
         /// <see cref="Update"/> will update the underlying cache value with a new value provided
@@ -39,14 +39,14 @@
         Update = 5,
 
         /// <summary>
-        /// <see cref="Refresh"/> will understand the cache value wtu
+        /// <see cref="Refresh"/> will refresh the cache duration for an existing cache.
         /// </summary>
         Refresh = 6,
 
         /// <summary>
         /// <see cref="Expire"/> will expire the cache from the cache system.
         /// </summary>
-        Expire = 7
+        Expire = 7,
 
     }
 }

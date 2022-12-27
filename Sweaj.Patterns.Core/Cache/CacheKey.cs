@@ -4,13 +4,17 @@
     {
         private CacheKey(string cacheKey)
         {
-            Guard.Against.NullOrEmpty(cacheKey);
-            Value = cacheKey; 
+            Value = Guard.Against.NullOrEmpty(cacheKey); ; 
         }
 
         public string Value { get; }
 
-        public static implicit operator CacheKey(string cacheKey)
+        public static implicit operator string(CacheKey cacheKey)
+        {
+            return cacheKey.Value;
+        }
+
+        public static explicit operator CacheKey(string cacheKey)
         {
             return new CacheKey(cacheKey);
         }

@@ -1,65 +1,96 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
-using Sweaj.Patterns.Data.Entities;
-using Sweaj.Patterns.Data.Services;
+using System.Runtime.ExceptionServices;
+using System.Text;
+using System.Text.Json;
 
 namespace Sweaj.Patterns.Cache
 {
-    /// <summary>
-    /// Combines the IDataM
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    public interface IDataStoreManager<TEntity> : IDataStoreManager<Guid, TEntity>
-        where TEntity : Entity
-    {
-
-    }
-
-    public interface IDataStoreManager<TKey, TEntity>
-        where TEntity : Entity<TKey>
-        where TKey : IEquatable<TKey>, new()
-    {
-        IDataStore<TEntity> Get();
-    }
-
     public interface ICacheManager
     {
-        CacheStore<T> Transform<T>(CacheRequest cacheRequest);
+        Task<CacheStore<TValue>> TransformAsync<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default);
     }
 
     public sealed class CacheManager : ICacheManager
     {
         private readonly IDistributedCache distributedCache;
+        private static readonly string InvalidValueRetrievalMethodInTransformingTheCacheRequest = $"The following {nameof(ValueRetrievalMethod)} is not supported.";
+        
         public CacheManager(IDistributedCache distributedCache)
         {
             this.distributedCache = distributedCache;
         }
 
-        public Task<CacheStore<T>> TransformAsync<T>(CacheRequest cacheRequest)
+        public async Task<CacheStore<TValue>> TransformAsync<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
         {
             Guard.Against.Null(cacheRequest, nameof(cacheRequest));
 
             switch (cacheRequest.ValueRetrievalMethod)
             {
                 case ValueRetrievalMethod.SafeGet:
-                    return SafeGet<T>(cacheRequest);
+                    return await SafeGet(cacheRequest.CacheKey, cacheRequest.ValueFactory, cancellationToken);
                 case ValueRetrievalMethod.Get:
-                    break;
-                case ValueRetrievalMethod.Create:
-                    break;
-                case ValueRetrievalMethod.SafeCreate:
-                    break;
+                    return await Get<TValue>(cacheRequest.CacheKey, cancellationToken);
+                case ValueRetrievalMethod.Set:
+                    return await Set<TValue>(cacheRequest.CacheKey, cacheRequest.Value, cancellationToken);
+                case ValueRetrievalMethod.SafeSet:
+                    return await SafeSet<TValue>(cacheRequest, cancellationToken);
                 case ValueRetrievalMethod.Update:
-                    break;
+                    return await Update<TValue>(cacheRequest, cancellationToken);
                 case ValueRetrievalMethod.Refresh:
-                    break;
+                    return await Refresh<TValue>(cacheRequest, cancellationToken);
                 default:
-                    throw new NotSupportedException("");
+                    throw new ApplicationException("Impossible case");
+                    
             }
         }
 
-        private CacheStore<T> SafeGet<T>(CacheRequest<T> cacheRequest)
+        private async Task<CacheStore<TValue>> SafeGet<TValue>(CacheKey cacheKey, Func<Task<TValue>> valueFactory, CancellationToken cancellationToken)
         {
-            // value factory must be non null here
+            var bytes = await distributedCache.GetAsync(cacheKey, cancellationToken);
+            var @string = Encoding.UTF8.GetString(bytes);
+            var cacheExists = bytes is not null;
+
+            if (cacheExists)
+            {
+                CacheStore<TValue>.FromCache(cac)
+            }
+
+        }
+
+        private async Task<CacheStore<TValue>> Get<TValue>(CacheKey cacheKey, CancellationToken cancellationToken)
+        {
+            var bytes = await distributedCache.GetAsync(cacheKey, cancellationToken);
+        }
+
+        private async Task<CacheStore<TValue>> Set<TValue>(CacheKey cacheKey, TValue value, CancellationToken cancellationToken)
+        {
+            var bytes = await distributedCache.GetAsync(cacheKey, cancellationToken);
+        }
+
+        private async Task<CacheStore<TValue>> SafeSet<TValue>(CacheKey cacheKey, CancellationToken cancellationToken)
+        {
+            var bytes = await distributedCache.GetAsync(cacheKey, cancellationToken);
+        }
+
+        private async Task<CacheStore<TValue>> Update<TValue>(CacheKey cacheKey, CancellationToken cancellationToken)
+        {
+            var bytes = await distributedCache.GetAsync(cacheKey, cancellationToken);
+        }
+
+        private async Task<CacheStore<TValue>> Refresh<TValue>(CacheKey cacheKey, CancellationToken cancellationToken)
+        {
+            var bytes = await distributedCache.GetAsync(cacheKey, cancellationToken);
+        }
+
+        private string GetString(byte[] bytes)
+        {
+            var str = Encoding.UTF8.GetString(bytes);
+
+        }
+
+        private TValue GetValue<TValue>(string json)
+        {
+            var value = JsonSerializer.Deserialize<TValue>(json, JsonSerializerOptions.Default)
         }
     }
 }

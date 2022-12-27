@@ -13,8 +13,7 @@ namespace Sweaj.Patterns.Cache
     {
         private CacheKeyFormat(string cacheKeyFormat)
         {
-            Guard.Against.NullOrEmpty(cacheKeyFormat, nameof(cacheKeyFormat));
-            Value = cacheKeyFormat;
+            Value = Guard.Against.NullOrEmpty(cacheKeyFormat, nameof(cacheKeyFormat));
         }
         public string Value { get; }
         public static implicit operator CacheKeyFormat(string cacheKey)
