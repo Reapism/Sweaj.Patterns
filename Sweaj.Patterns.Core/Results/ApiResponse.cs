@@ -4,11 +4,7 @@
     {
         protected ApiResponse(string message, int httpStatusCode)
         {
-            Guard.Against.NullOrWhiteSpace(message);
-
-            var trimmedMessage = message.Trim();
-
-            Guard.Against.Zero(trimmedMessage.Length);
+            var trimmedMessage = Guard.Against.NullOrWhiteSpace(message).Trim();
 
             InternalMessage = trimmedMessage;
             HttpStatusCode = httpStatusCode;
@@ -54,7 +50,12 @@
 
         public static bool IsJsonMessage(char firstInternalMessageCharacter)
         {
-            return firstInternalMessageCharacter == '{' || firstInternalMessageCharacter == '[';
+            return firstInternalMessageCharacter is '{' or '[';
+        }
+
+        public static ApiResponse From(string message, int httpStatusCode)
+        {
+            return new ApiResponse(message, Guard.Against.AgainstExpression<int>(e => IsHttpStatusCode(e), httpStatusCode, "The given http status code is invalid based on the rfc9110 standard."););
         }
 
         public static ApiResponse Ok(string message = nameof(Ok))
@@ -98,8 +99,8 @@
         private ApiResponse(string message, int httpStatusCode, T value)
             : base(message, httpStatusCode)
         {
-            Guard.Against.Null(value);
-            Value = value;
+
+            Value = Guard.Against.Null(value); ;
         }
 
         public T Value { get; }
