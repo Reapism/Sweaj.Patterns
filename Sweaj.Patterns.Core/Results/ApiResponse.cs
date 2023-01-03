@@ -55,7 +55,7 @@
 
         public static ApiResponse From(string message, int httpStatusCode)
         {
-            return new ApiResponse(message, Guard.Against.AgainstExpression<int>(e => IsHttpStatusCode(e), httpStatusCode, "The given http status code is invalid based on the rfc9110 standard."););
+            return new ApiResponse(message, Guard.Against.AgainstExpression<int>(e => IsHttpStatusCode(e), httpStatusCode, "The given http status code is invalid based on the rfc9110 standard."));
         }
 
         public static ApiResponse Ok(string message = nameof(Ok))
