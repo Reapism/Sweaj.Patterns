@@ -28,7 +28,7 @@ namespace Sweaj.Patterns.Cache
 
             if (segments.Length < 2)
             {
-                throw new InvalidCacheKeyException(cacheKey);
+                throw new InvalidCacheKeyException(cacheKey, CacheKeyFormat);
             }
 
             AdditionalCacheKeyValidations(cacheKey, parameters);
@@ -36,7 +36,8 @@ namespace Sweaj.Patterns.Cache
 
         protected CacheKey ConstructCacheKey(string[] segments)
         {
-            return string.Join(CacheKeySeparator, segments);
+            var cacheKey = (CacheKey)string.Join(CacheKeySeparator, segments);
+            return cacheKey;
         }
 
         protected string[] DeconstructCacheKey(CacheKey cacheKey)

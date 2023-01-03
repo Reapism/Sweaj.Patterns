@@ -1,19 +1,29 @@
-﻿using Sweaj.Patterns.NullObject;
-using System.Net.Http.Headers;
+﻿using Sweaj.Patterns.Data.Services;
+using Sweaj.Patterns.NullObject;
 
 namespace Sweaj.Patterns.Cache
 {
     public sealed class CacheStore<T> : IEmpty<CacheStore<T>>
     {
-        private CacheStore(CacheRequest<T> cacheRequest, ValueResultStatus status)
+        private CacheStore(CacheRequest cacheRequest, ValueResultStatus status, T value)
         {
             CacheRequest = Guard.Against.Null(cacheRequest, nameof(cacheRequest));
             Status = status;
+            Value = Guard.Against.Null<T>(value, nameof(value));
         }
 
-        public CacheRequest<T> CacheRequest { get; }
+        private CacheStore(CacheRequestValue<T> cacheValueRequest, ValueResultStatus status, T value)
+        {
+            Guard.Against.Null(cacheValueRequest, nameof(cacheValueRequest));
+            CacheRequest = cacheValueRequest.Request;
+
+            Status = status;
+            Value = Guard.Against.Null<T>(value, nameof(value));
+        }
+        public T Value { get; }
+        public CacheRequest CacheRequest { get; }
         public ValueResultStatus Status { get; }
-        public bool IsEmpty() => CacheRequest is null;
+        public bool IsEmpty() => ValueResultStatus.Empty == Status;
 
         /// <summary>
         /// Creates a new instance of <see cref="CacheStore{T}"/> that represents a value obtained from a <see cref="ValueResultStatus.Empty"/>.
@@ -23,7 +33,7 @@ namespace Sweaj.Patterns.Cache
         /// <see cref="ValueResultStatus.Empty"/> status.</returns>
         public CacheStore<T> Empty()
         {
-            return new CacheStore<T>(default, ValueResultStatus.Empty);
+            return new CacheStore<T>(default(CacheRequest), ValueResultStatus.Empty, default);
         }
 
         /// <summary>
@@ -32,32 +42,35 @@ namespace Sweaj.Patterns.Cache
         /// <param name="value"></param>
         /// <param name="cacheRequest"></param>
         /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.FromCache"/> status.</returns>
-        public static CacheStore<T> FromCache(CacheRequest<T> cacheRequest)
+        public static CacheStore<T> FromCache(CacheRequestValue<T> cacheRequest)
         {
-            return new CacheStore<T>(cacheRequest, ValueResultStatus.Cache);
+            return new CacheStore<T>(cacheRequest.Request, ValueResultStatus.Cache, cacheRequest.Value);
         }
 
         /// <summary>
         /// Creates a new instance of <see cref="CacheStore{T}"/> that represents a value obtained from a <see cref="ValueResultStatus.DataStore"/>.
         /// </summary>
-        /// <param name="value">The value retrieved.</param>
-        /// <param name="cacheRequest">The options used to </param>
+        /// <param name="cacheRequest"></param>
         /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.DataStore"/> status.</returns>
-        public static CacheStore<T> FromDataStore(CacheRequest<T> cacheRequest)
+        public static CacheStore<T> FromDataStore(CacheRequestValue<T> cacheRequest)
         {
-            return new CacheStore<T>(cacheRequest, ValueResultStatus.DataStore);
+            return new CacheStore<T>(cacheRequest, ValueResultStatus.DataStore, cacheRequest.Value);
         }
 
         /// <summary>
         /// Returns a new <see cref="CacheStore{T}"/> and specifies that this value
         /// was unknowningly obtained via cache or datastore due to a third party request.
         /// </summary>
-        /// <param name="value"></param>
         /// <param name="cacheRequest"></param>
         /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.Undefined"/> status.</returns>
-        public static CacheStore<T> FromThirdParty(CacheRequest<T> cacheRequest)
+        public static CacheStore<T> FromThirdParty(CacheRequestValue<T> cacheRequest)
         {
-            return new CacheStore<T>(cacheRequest, ValueResultStatus.ThirdParty);
+            return new CacheStore<T>(cacheRequest, ValueResultStatus.ThirdParty, cacheRequest.Value);
+        }
+
+        public ValueStore<T> ToValueStore()
+        {
+
         }
     }
 }
