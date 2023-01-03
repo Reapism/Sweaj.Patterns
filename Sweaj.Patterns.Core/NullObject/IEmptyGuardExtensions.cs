@@ -1,6 +1,4 @@
-﻿using Sweaj.Patterns.ValidateClause;
-
-namespace Sweaj.Patterns.NullObject
+﻿namespace Sweaj.Patterns.NullObject
 {
     internal static class IEmptyGuardExtensions
     {
