@@ -11,7 +11,7 @@ namespace Sweaj.Patterns.Data.Entities
     {
         public override Entity<Guid> Empty()
         {
-            return new Entity<Guid>() { Id = Guid.Empty };
+            return base.Empty();
         }
         public override bool IsEmpty()
         {
