@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Sweaj.Patterns.Json
+namespace Sweaj.Patterns.Serialization.Json
 {
     public static class JsonSerializerOptionsProvider
     {
@@ -15,24 +15,15 @@ namespace Sweaj.Patterns.Json
         };
         public static JsonSerializerOptions Web => DefaultInstance;
 
-        private static readonly JsonSerializerOptions DefaultInstanceWithConverters = new(JsonSerializerDefaults.Web)
+        public static JsonSerializerOptions WithConverters(this JsonSerializerOptions jsonSerializerOptions, IEnumerable<JsonConverter> jsonConverters)
         {
-            AllowTrailingCommas = false,
-            NumberHandling = JsonNumberHandling.Strict,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            ReferenceHandler = ReferenceHandler.IgnoreCycles
-        };
-
-        public static JsonSerializerOptions WithConverters(JsonSerializerOptions jsonSerializerOptions, IEnumerable<JsonConverter> jsonConverters)
-        {
-            var options = new JsonSerializerOptions(jsonSerializerOptions);
-
+            jsonSerializerOptions.Converters.Clear();
             foreach (var jsonConverter in jsonConverters)
             {
-                options.Converters.Add(jsonConverter);
+                jsonSerializerOptions.Converters.Add(jsonConverter);
             }
 
-            return options;
+            return jsonSerializerOptions;
         }
 
         public static IList<JsonConverter> GetJsonConverters(Assembly[] assembliesToSearch)
