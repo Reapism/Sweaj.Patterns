@@ -1,5 +1,5 @@
 ﻿using Sweaj.Patterns.Data.Entities;
-using Sweaj.Patterns.Data.Repository;
+using Sweaj.Patterns.Data.Repositories;
 
 namespace Sweaj.Patterns.Data.Services
 {

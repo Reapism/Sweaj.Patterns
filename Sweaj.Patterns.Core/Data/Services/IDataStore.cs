@@ -3,13 +3,9 @@ using System.Diagnostics;
 
 namespace Sweaj.Patterns.Data.Services
 {
-    public interface IDataStore<TEntity>
+    public interface IDataStore<TEntity> : IDataStore<Guid, TEntity>
         where TEntity : Entity
     {
-        TEntity? Value { get; }
-        bool IsReadOnly { get; }
-        bool HasValue { get; }
-        DataRetrievalStatus Status { get; }
     }
 
 
@@ -18,7 +14,6 @@ namespace Sweaj.Patterns.Data.Services
         where TEntity : Entity<TKey>
     {
         TEntity? Value { get; }
-        bool IsReadOnly { get; }
         bool HasValue { get; }
         DataRetrievalStatus Status { get; }
     }
@@ -27,61 +22,60 @@ namespace Sweaj.Patterns.Data.Services
         where TKey : IEquatable<TKey>, new()
         where TEntity : Entity<TKey>
     {
-        private DataStore(TEntity? value, bool isReadOnly, TimeSpan duration, DataRetrievalStatus dataRetrievalStatus)
+        private DataStore(TEntity? value, TimeSpan duration, DataRetrievalStatus dataRetrievalStatus)
         {
             Value = value;
-            IsReadOnly = isReadOnly;
             Duration = duration;
             Status = dataRetrievalStatus;
         }
 
         public static DataStore<TKey, TEntity> FromDatabase(
-            Func<TEntity> getValueDelegate, bool isReadOnly)
+            Func<TEntity> getValueDelegate)
         {
-            return FromValue(getValueDelegate, isReadOnly, DataRetrievalStatus.Database);
+            return FromValue(getValueDelegate, DataRetrievalStatus.Database);
         }
 
         public static async Task<DataStore<TKey, TEntity>> FromDatabaseAsync(
-            Func<Task<TEntity>> getValueDelegate, bool isReadOnly)
+            Func<Task<TEntity>> getValueDelegate)
         {
-            return await FromValueAsync(getValueDelegate, isReadOnly, DataRetrievalStatus.Database);
+            return await FromValueAsync(getValueDelegate, DataRetrievalStatus.Database);
         }
 
         public static DataStore<TKey, TEntity> FromCache(
-            Func<TEntity> getValueDelegate, bool isReadOnly)
+            Func<TEntity> getValueDelegate)
         {
-            return FromValue(getValueDelegate, isReadOnly, DataRetrievalStatus.Cache);
+            return FromValue(getValueDelegate, DataRetrievalStatus.Cache);
         }
 
         public static async Task<DataStore<TKey, TEntity>> FromCacheAsync(
-            Func<Task<TEntity>> getValueDelegate, bool isReadOnly)
+            Func<Task<TEntity>> getValueDelegate)
         {
-            return await FromValueAsync(getValueDelegate, isReadOnly, DataRetrievalStatus.Cache);
+            return await FromValueAsync(getValueDelegate, DataRetrievalStatus.Cache);
         }
 
         public static DataStore<TKey, TEntity> FromFile(
-            Func<TEntity> getValueDelegate, bool isReadOnly)
+            Func<TEntity> getValueDelegate)
         {
-            return FromValue(getValueDelegate, isReadOnly, DataRetrievalStatus.File);
+            return FromValue(getValueDelegate, DataRetrievalStatus.File);
         }
 
-        public static async Task<DataStore<TKey, TEntity>> FromFileAsync(Func<Task<TEntity>> getValueDelegate, bool isReadOnly)
+        public static async Task<DataStore<TKey, TEntity>> FromFileAsync(Func<Task<TEntity>> getValueDelegate)
         {
-            return await FromValueAsync(getValueDelegate, isReadOnly, DataRetrievalStatus.File);
+            return await FromValueAsync(getValueDelegate, DataRetrievalStatus.File);
         }
 
-        public static DataStore<TKey, TEntity> FromWebResource(Func<TEntity> getValueDelegate, bool isReadOnly)
+        public static DataStore<TKey, TEntity> FromWebResource(Func<TEntity> getValueDelegate)
         {
-            return FromValue(getValueDelegate, isReadOnly, DataRetrievalStatus.WebResource);
+            return FromValue(getValueDelegate, DataRetrievalStatus.WebResource);
         }
 
-        public static async Task<DataStore<TKey, TEntity>> FromWebResourceAsync(Func<Task<TEntity>> getValueDelegate, bool isReadOnly)
+        public static async Task<DataStore<TKey, TEntity>> FromWebResourceAsync(Func<Task<TEntity>> getValueDelegate)
         {
-            return await FromValueAsync(getValueDelegate, isReadOnly, DataRetrievalStatus.WebResource);
+            return await FromValueAsync(getValueDelegate, DataRetrievalStatus.WebResource);
         }
 
         private static DataStore<TKey, TEntity> FromValue(
-            Func<TEntity> getValueDelegate, bool isReadOnly, DataRetrievalStatus dataRetrievalStatus)
+            Func<TEntity> getValueDelegate, DataRetrievalStatus dataRetrievalStatus)
         {
             var time = Stopwatch.StartNew();
 
@@ -91,23 +85,23 @@ namespace Sweaj.Patterns.Data.Services
             var duration = time.Elapsed;
 
             var status = GetDataRetrievalStatusOrEmpty(value, dataRetrievalStatus);
-            var dataStore = new DataStore<TKey, TEntity>(value, isReadOnly, duration, status);
+            var dataStore = new DataStore<TKey, TEntity>(value, duration, status);
 
             return dataStore;
         }
 
         private static async Task<DataStore<TKey, TEntity>> FromValueAsync(
-            Func<Task<TEntity>> getValueDelegate, bool isReadOnly, DataRetrievalStatus dataRetrievalStatus)
+            Func<Task<TEntity>> getValueDelegate, DataRetrievalStatus dataRetrievalStatus)
         {
-            var time = Stopwatch.StartNew();
+            var startTime = Stopwatch.GetTimestamp();
 
             var value = await getValueDelegate();
 
-            time.Stop();
-            var duration = time.Elapsed;
+            var endTime = Stopwatch.GetTimestamp();
+            var duration = Stopwatch.GetElapsedTime(startTime, endTime);
 
             var status = GetDataRetrievalStatusOrEmpty(value, dataRetrievalStatus);
-            var dataStore = new DataStore<TKey, TEntity>(value, isReadOnly, duration, status);
+            var dataStore = new DataStore<TKey, TEntity>(value, duration, status);
 
             return dataStore;
         }
@@ -115,13 +109,17 @@ namespace Sweaj.Patterns.Data.Services
         private static DataRetrievalStatus GetDataRetrievalStatusOrEmpty(TEntity? entity, DataRetrievalStatus dataRetrievalStatus)
         {
             var entityExists = entity is not null;
-            var returnStatus = entityExists ? dataRetrievalStatus : (DataRetrievalStatus)(int)dataRetrievalStatus++;
 
-            return returnStatus;
+            if (!entityExists)
+            {
+                DataRetrievalStatus emptyStatus = (DataRetrievalStatus)(int)dataRetrievalStatus++;
+                return emptyStatus;
+            }
+
+            return dataRetrievalStatus;
         }
 
-        public TEntity? Value { get; }
-        public bool IsReadOnly { get; }
+        public TEntity Value { get; } = default(TEntity);
 
         public bool HasValue => Value is not null;
         public DataRetrievalStatus Status { get; }
