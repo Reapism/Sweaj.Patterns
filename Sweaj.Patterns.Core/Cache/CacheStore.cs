@@ -1,9 +1,11 @@
 ﻿using Sweaj.Patterns.Data.Services;
+using Sweaj.Patterns.Data.Statuses;
+using Sweaj.Patterns.Mapping;
 using Sweaj.Patterns.NullObject;
 
 namespace Sweaj.Patterns.Cache
 {
-    public sealed class CacheStore<T> : IEmpty<CacheStore<T>>
+    public sealed class CacheStore<T> : IEmpty
     {
         private CacheStore(CacheRequest cacheRequest, ValueResultStatus status, T value)
         {
@@ -12,7 +14,7 @@ namespace Sweaj.Patterns.Cache
             Value = Guard.Against.Null<T>(value, nameof(value));
         }
 
-        private CacheStore(CacheRequestValue<T> cacheValueRequest, ValueResultStatus status, T value)
+        private CacheStore(CacheRequest<T> cacheValueRequest, ValueResultStatus status, T value)
         {
             Guard.Against.Null(cacheValueRequest, nameof(cacheValueRequest));
             CacheRequest = cacheValueRequest.Request;
@@ -31,10 +33,12 @@ namespace Sweaj.Patterns.Cache
         /// <typeparam name="T"></typeparam>
         /// <returns>A default value <see cref="CacheStore{T}"/> that has a 
         /// <see cref="ValueResultStatus.Empty"/> status.</returns>
-        public CacheStore<T> Empty()
+        public static CacheStore<T> Empty()
         {
             return new CacheStore<T>(default(CacheRequest), ValueResultStatus.Empty, default);
         }
+
+
 
         /// <summary>
         /// Creates a new instance of <see cref="CacheStore{T}"/> that represents a value obtained from a <see cref="ValueResultStatus.Cache"/>.
@@ -42,7 +46,7 @@ namespace Sweaj.Patterns.Cache
         /// <param name="value"></param>
         /// <param name="cacheRequest"></param>
         /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.FromCache"/> status.</returns>
-        public static CacheStore<T> FromCache(CacheRequestValue<T> cacheRequest)
+        public static CacheStore<T> FromCache(CacheRequest<T> cacheRequest)
         {
             return new CacheStore<T>(cacheRequest.Request, ValueResultStatus.Cache, cacheRequest.Value);
         }
@@ -52,7 +56,7 @@ namespace Sweaj.Patterns.Cache
         /// </summary>
         /// <param name="cacheRequest"></param>
         /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.DataStore"/> status.</returns>
-        public static CacheStore<T> FromDataStore(CacheRequestValue<T> cacheRequest)
+        public static CacheStore<T> FromDataStore(CacheRequest<T> cacheRequest)
         {
             return new CacheStore<T>(cacheRequest, ValueResultStatus.DataStore, cacheRequest.Value);
         }
@@ -63,12 +67,12 @@ namespace Sweaj.Patterns.Cache
         /// </summary>
         /// <param name="cacheRequest"></param>
         /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.Undefined"/> status.</returns>
-        public static CacheStore<T> FromThirdParty(CacheRequestValue<T> cacheRequest)
+        public static CacheStore<T> FromThirdParty(CacheRequest<T> cacheRequest)
         {
             return new CacheStore<T>(cacheRequest, ValueResultStatus.ThirdParty, cacheRequest.Value);
         }
 
-        public ValueStore<T> ToValueStore()
+        public ValueStore<T> ToValueStore(IEntityToValueMapper)
         {
 
         }

@@ -1,27 +1,33 @@
-﻿
-namespace Sweaj.Patterns.Cache
+﻿namespace Sweaj.Patterns.Cache
 {
     /// <summary>
     /// Encapsulates cachable behavior for a value.
     /// </summary>
     /// <typeparam name="TValue">The value to cache.</typeparam>
-    /// <typeparam name="TParameter">An object representing all the values needed to construct a unique cache key.</typeparam>
-    public abstract class CachableValueBase<TValue, TParameter>
+    /// <typeparam name="TParameters">An object representing all the values needed to construct a unique cache key.</typeparam>
+    public abstract class CachableValueServiceBase<TValue, TParameters>
         where TValue : class
-        where TParameter : class
+        where TParameters : class
     {
         // Overridable default members
 
         protected const string DefaultCacheKeySeparator = "|||";
         protected virtual string CacheKeySeparator { get; } = DefaultCacheKeySeparator;
-        protected virtual void AdditionalCacheKeyValidations(CacheKey cacheKey, TParameter parameters)
+        protected virtual void AdditionalCacheKeyValidations(CacheKey cacheKey, TParameters parameters)
         { }
 
         // Must implement own version.
         protected abstract CacheKeyFormat CacheKeyFormat { get; init; }
-        protected abstract string[] GetOrderedCacheKeySegments(TParameter parameters);
+        protected abstract string[] GetOrderedCacheKeySegments(TParameters parameters);
 
-        public void ValidateCacheKey(TParameter parameters)
+        /// <summary>
+        /// Intended to be called in the during object initialization of the derived type.
+        /// <para>Intended to throw exceptions as these validations are fatal and should 
+        /// prevent the cache key from being created read etc. since it does not meet the criteria.</para>
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <exception cref="InvalidCacheKeyException"></exception>
+        public void ValidateCacheKey(TParameters parameters)
         {
             var segments = GetOrderedCacheKeySegments(parameters);
             var cacheKey = ConstructCacheKey(segments);

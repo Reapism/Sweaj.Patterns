@@ -1,13 +1,22 @@
-﻿using System.Linq.Expressions;
+﻿using Sweaj.Patterns.Data.Services;
+using System.Linq.Expressions;
 
 namespace Sweaj.Patterns.Cache
 {
-    public sealed class CacheRequest
+    public interface ICacheRequest
     {
-        private CacheRequest(CacheKey cacheKey, ValueRetrievalMethod valueRetrievalMethod, CacheDurationOptions cacheDurationOptions)
+        public Guid RequestId { get; }
+        public CacheKey CacheKey { get; }
+        public CacheRetrievalMethod CacheRetrievalMethod { get; }
+        public CacheDurationOptions? CacheDurationOptions { get; }
+    }
+
+    public sealed class CacheRequest : ICacheRequest
+    {
+        private CacheRequest(CacheKey cacheKey, CacheRetrievalMethod cacheRetrievalMethod, CacheDurationOptions cacheDurationOptions)
         {
             CacheKey = cacheKey;
-            ValueRetrievalMethod = valueRetrievalMethod;
+            CacheRetrievalMethod = cacheRetrievalMethod;
 
             RequestId = Guid.NewGuid();
             CacheDurationOptions = cacheDurationOptions;
@@ -15,86 +24,92 @@ namespace Sweaj.Patterns.Cache
 
         public Guid RequestId { get; }
         public CacheKey CacheKey { get; }
-        public ValueRetrievalMethod ValueRetrievalMethod { get; }
+        public CacheRetrievalMethod CacheRetrievalMethod { get; }
         public CacheDurationOptions? CacheDurationOptions { get; }
-
-        public static CacheRequest Create([NotNull, ValidatedNotNull] CacheKey cacheKey, ValueRetrievalMethod valueRetrievalMethod, CacheDurationOptions cacheDurationOptions)
-        {
-            var request = new CacheRequest(cacheKey, valueRetrievalMethod, cacheDurationOptions);
-            return request;
-        }
 
         public static CacheRequest Get([NotNull, ValidatedNotNull] CacheKey cacheKey)
         {
-            var request = new CacheRequest(cacheKey, ValueRetrievalMethod.Get, null);
+            var request = new CacheRequest(cacheKey, CacheRetrievalMethod.Get, null);
             return request;
         }
 
         public static CacheRequest Refresh(
             [NotNull, ValidatedNotNull] CacheKey cacheKey, CacheDurationOptions cacheDurationOptions)
         {
-            var request = new CacheRequest(cacheKey, ValueRetrievalMethod.Refresh, cacheDurationOptions);
+            var request = new CacheRequest(cacheKey, CacheRetrievalMethod.Refresh, cacheDurationOptions);
             return request;
         }
 
         public static CacheRequest Expire(
             [NotNull, ValidatedNotNull] CacheKey cacheKey)
         {
-            var request = new CacheRequest(cacheKey, ValueRetrievalMethod.Expire, null);
+            var request = new CacheRequest(cacheKey, CacheRetrievalMethod.Expire, null);
             return request;
         }
     }
 
-    public sealed class CacheRequestValue<TValue>
+    public sealed class CacheRequest<TValue> : IValueProvider<TValue>
     {
-        private CacheRequestValue(CacheRequest cacheRequest, TValue? value, Func<Task<TValue>>? valueFactory)
+        private CacheRequest(
+            CacheKey cacheKey,
+            CacheRetrievalMethod cacheRetrievalMethod,
+            CacheDurationOptions cacheDurationOptions,
+            TValue? value,
+            Func<Task<TValue>>? valueFactory)
         {
-            Request = cacheRequest;
+            RequestId = Guid.NewGuid();
+            CacheKey = cacheKey;
+            CacheRetrievalMethod = cacheRetrievalMethod;
+            CacheDurationOptions = cacheDurationOptions;
             Value = value;
             ValueFactory = valueFactory;
         }
-        public CacheRequest Request { get; }
+        public Guid RequestId { get; }
+        public CacheKey CacheKey { get; }
+        public CacheRetrievalMethod CacheRetrievalMethod { get; }
+        public CacheDurationOptions? CacheDurationOptions { get; }
 
         public Func<Task<TValue>>? ValueFactory { get; }
 
         public TValue? Value { get; }
+
         public bool HasValueFactory()
         {
             return ValueFactory is not null;
         }
 
-        public static CacheRequestValue<TValue> SafeGet(
-            [NotNull, ValidatedNotNull] CacheKey cacheKey, Func<Task<TValue>> valueFactory)
+        public static CacheRequest<TValue> SafeGet(
+            [NotNull, ValidatedNotNull] CacheKey cacheKey, [NotNull, ValidatedNotNull] Func<Task<TValue>> valueFactory)
         {
             var request = CacheRequest.Get(cacheKey);
-            var valueRequest = new CacheRequestValue<TValue>(request, default, valueFactory);
+            var valueRequest = new CacheRequest<TValue>(request, default, valueFactory);
 
             return valueRequest;
         }
 
-        public static CacheRequestValue<TValue> Set(
+        public static CacheRequest<TValue> Set(
             [NotNull, ValidatedNotNull] CacheKey cacheKey, TValue value, CacheDurationOptions cacheDurationOptions)
         {
-            var request = CacheRequest.Create(cacheKey, ValueRetrievalMethod.Set, cacheDurationOptions);
-            var valueRequest = new CacheRequestValue<TValue>(request, value, null);
+            var request = CacheRequest(cacheKey, CacheRetrievalMethod.Set, cacheDurationOptions);
+            var valueRequest = new CacheRequest<TValue>(request, value, null);
 
             return valueRequest;
         }
 
-        public static CacheRequestValue<TValue> SafeSet(
+        public static CacheRequest<TValue> SafeSet(
             [NotNull, ValidatedNotNull] CacheKey cacheKey, TValue value, Func<Task<TValue>> valueFactory, CacheDurationOptions cacheDurationOptions)
         {
-            var request = CacheRequest.Create(cacheKey, ValueRetrievalMethod.SafeSet, cacheDurationOptions);
-            var valueRequest = new CacheRequestValue<TValue>(request, value, valueFactory);
+            var request = CacheRequest.Create(cacheKey, CacheRetrievalMethod.SafeSet, cacheDurationOptions);
+            var valueRequest = new CacheRequest<TValue>(request, value, valueFactory);
 
             return valueRequest;
         }
 
-        public static CacheRequestValue<TValue> Update(
+        public static CacheRequest<TValue> Update(
             [NotNull, ValidatedNotNull] CacheKey cacheKey, TValue newValue, CacheDurationOptions cacheDurationOptions)
         {
-            var request = CacheRequest.Create(cacheKey, ValueRetrievalMethod.Update, cacheDurationOptions);
-            var valueRequest = new CacheRequestValue<TValue>(request, newValue, null);
+            var request = CacheRequest.Create(cacheKey, CacheRetrievalMethod.Update, cacheDurationOptions);
+            var valueRequest = new CacheRequest<TValue>(request, newValue, null);
 
             return valueRequest;
         }

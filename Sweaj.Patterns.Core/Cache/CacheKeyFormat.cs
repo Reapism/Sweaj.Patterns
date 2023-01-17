@@ -1,21 +1,15 @@
 ﻿
 namespace Sweaj.Patterns.Cache
 {
-    public sealed class CacheOptions
-    {
-        public CacheOptions() { }
-
-        public CacheKeyFormat CacheKeyFormat { get; }
-        public CacheDurationOptions CacheDurationOptions { get; }
-    }
-
     public sealed class CacheKeyFormat
     {
         private CacheKeyFormat(string cacheKeyFormat)
         {
             Value = Guard.Against.NullOrEmpty(cacheKeyFormat, nameof(cacheKeyFormat));
         }
+
         public string Value { get; }
+
         public static implicit operator CacheKeyFormat(string cacheKey)
         {
             return new CacheKeyFormat(cacheKey);
@@ -34,6 +28,7 @@ namespace Sweaj.Patterns.Cache
         {
             return Value.GetHashCode();
         }
+
         public override string ToString()
         {
             return Value;
