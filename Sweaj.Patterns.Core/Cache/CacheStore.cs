@@ -9,19 +9,19 @@ namespace Sweaj.Patterns.Cache
     {
         private CacheStore(CacheRequest cacheRequest, ValueResultStatus status, T value)
         {
-            CacheRequest = Guard.Against.Null(cacheRequest, nameof(cacheRequest));
+            CacheRequest = cacheRequest;
             Status = status;
             Value = Guard.Against.Null<T>(value, nameof(value));
         }
 
-        private CacheStore(CacheRequest<T> cacheValueRequest, ValueResultStatus status, T value)
+        private CacheStore(CacheRequest<T> cacheRequest, ValueResultStatus status, T value)
         {
-            Guard.Against.Null(cacheValueRequest, nameof(cacheValueRequest));
-            CacheRequest = cacheValueRequest.Request;
+            CacheRequest = CacheRequest.From(cacheRequest);
 
             Status = status;
             Value = Guard.Against.Null<T>(value, nameof(value));
         }
+
         public T Value { get; }
         public CacheRequest CacheRequest { get; }
         public ValueResultStatus Status { get; }
@@ -48,7 +48,7 @@ namespace Sweaj.Patterns.Cache
         /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.FromCache"/> status.</returns>
         public static CacheStore<T> FromCache(CacheRequest<T> cacheRequest)
         {
-            return new CacheStore<T>(cacheRequest.Request, ValueResultStatus.Cache, cacheRequest.Value);
+            return new CacheStore<T>(cacheRequest, ValueResultStatus.Cache, cacheRequest.Value);
         }
 
         /// <summary>
@@ -72,9 +72,9 @@ namespace Sweaj.Patterns.Cache
             return new CacheStore<T>(cacheRequest, ValueResultStatus.ThirdParty, cacheRequest.Value);
         }
 
-        public ValueStore<T> ToValueStore(IEntityToValueMapper)
-        {
-
+        public ValueStore<T> AsValueStore()
+        {   
+            return ValueStore<T>.FromCache(this);
         }
     }
 }

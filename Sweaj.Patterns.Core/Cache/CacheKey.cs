@@ -22,16 +22,11 @@
         // Should create guard against cache key lengths being less than two segments?
         public static CacheKey Create(string separator, params string[] segments)
         {
-            Guard.Against.InvalidInput(segments, nameof(segments),
-                (segments) => { return segments.Length >= 2; });
-            var value = string.Join(Guard.Against.NullOrWhiteSpace(separator), Guard.Against.NullOrEmpty(segments));
+            Guard.Against.NullOrInvalidInput(segments, nameof(segments),
+                (segments) => { return segments.Length < 3; });
+            var value = string.Join(Guard.Against.NullOrWhiteSpace(separator), segments);
 
             return new CacheKey(value);
-        }
-
-        public CacheStore<TValue> IntoFetchStore<TValue>()
-        {
-            CacheStore<TValue>.FromCache(CacheRequest.Get(this));
         }
 
         public override bool Equals(object? obj)
