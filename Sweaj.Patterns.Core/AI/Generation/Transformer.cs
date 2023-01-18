@@ -8,9 +8,9 @@
 
 namespace Sweaj.Patterns.AI.Generation
 {
-    public struct Transformer
+    public readonly struct Transformer
     {
-        [Gene]
+        public TResult Transformer<TModel, TResult>
         public TResult Transform<T, TResult>(Func<T, TResult> input, Func<Func<T, TResult>, TResult> computer)
         {
             var result = computer(input);
