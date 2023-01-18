@@ -1,8 +1,7 @@
 ﻿namespace Sweaj.Patterns.NullObject
 {
-    public interface IEmpty<T>
+    public interface IEmpty
     {
-        T Empty();
         bool IsEmpty();
     }
 }

@@ -1,10 +1,12 @@
-﻿namespace Sweaj.Patterns.NullObject
+﻿using System.Runtime.CompilerServices;
+
+namespace Sweaj.Patterns.NullObject
 {
     internal static class IEmptyGuardExtensions
     {
 #pragma warning disable IDE0060 // Remove unused parameter
-        public static T NullOrEmpty<T>(this IGuardClause guardClause, T emptyableValue, string parameterName)
-            where T : IEmpty<T>
+        public static T NullOrEmpty<T>(this IGuardClause guardClause, T emptyableValue, [CallerArgumentExpression("emptyableValue")]string parameterName)
+            where T : IEmpty
         {
             if (emptyableValue is null || emptyableValue.IsEmpty())
             {

@@ -23,7 +23,7 @@ namespace Sweaj.Patterns.Data.Entities
     /// A base entity with generic type identifier and support for holding
     /// events, and uses t.
     /// </summary>
-    public class Entity<TKey> : IDomainEventProvider, IEmpty<Entity<TKey>>
+    public class Entity<TKey> : IDomainEventProvider, IEmpty
         where TKey : IEquatable<TKey>, new()
     {
         public TKey Id { get; protected set; } = new();
