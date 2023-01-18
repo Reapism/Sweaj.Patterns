@@ -1,23 +1,33 @@
 ﻿using Sweaj.Patterns.Cache;
 using Sweaj.Patterns.Data.Entities;
+using Sweaj.Patterns.Data.Statuses;
 using Sweaj.Patterns.Mapping;
+using Sweaj.Patterns.NullObject;
 
 namespace Sweaj.Patterns.Data.Services
 {
-    public sealed class ValueStore<TValue>
-        where TValue : class
+    public sealed class ValueStore<TValue> : IEmpty
     {
         public TValue Value { get; }
         public ValueResultStatus ValueResultStatus { get; }
         private ValueStore(TValue value, ValueResultStatus valueResultStatus)
         {
-            Value = Guard.Against.Null(value, nameof(value)); ;
+            Value = value
             ValueResultStatus = valueResultStatus;
         }
-
-        public static ValueStore<TValue> FromCache(CacheStore<TValue> cacheStore)
+        public static ValueStore<TValue> FromEmpty()
         {
-            return new ValueStore<TValue>(cacheStore.Value, ValueResultStatus.Cache);
+            return new ValueStore<TValue>(default, ValueResultStatus.Empty);
+        }
+
+        public static ValueStore<TValue> FromValue([NotNull, ValidatedNotNull] TValue value)
+        {
+            return new ValueStore<TValue>(Guard.Against.Null(value), ValueResultStatus.Value);
+        }
+
+        public static ValueStore<TValue> FromCache([NotNull, ValidatedNotNull] CacheStore<TValue> cacheStore)
+        {
+            return new ValueStore<TValue>(Guard.Against.Null(Guard.Against.Null(cacheStore).Value), ValueResultStatus.Cache);
         }
 
         public static ValueStore<TValue> FromDataStore<TKey, TEntity>(IEntityToValueMapper<TEntity, TValue> mapper, DataStore<TKey, TEntity> dataStore)
@@ -26,6 +36,18 @@ namespace Sweaj.Patterns.Data.Services
         {
             var value = mapper.Convert(dataStore.Value);
             return new ValueStore<TValue>(value, ValueResultStatus.DataStore);
+        }
+
+        public static ValueStore<TValue> FromDataStore<TEntity>(IEntityToValueMapper<TEntity, TValue> mapper, DataStore<Guid, TEntity> dataStore)
+            where TEntity : Entity
+        {
+            var value = mapper.Convert(dataStore.Value);
+            return new ValueStore<TValue>(value, ValueResultStatus.DataStore);
+        }
+        
+        public bool IsEmpty()
+        {
+            return ValueResultStatus == ValueResultStatus.Empty;
         }
     }
 }

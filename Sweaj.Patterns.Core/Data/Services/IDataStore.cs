@@ -3,28 +3,13 @@ using System.Diagnostics;
 
 namespace Sweaj.Patterns.Data.Services
 {
-    public interface IDataStore<TEntity> : IDataStore<Guid, TEntity>
-        where TEntity : Entity
-    {
-    }
-
-
-    public interface IDataStore<TKey, TEntity>
+    public class DataStore<TKey, TEntity>
         where TKey : IEquatable<TKey>, new()
         where TEntity : Entity<TKey>
     {
-        TEntity? Value { get; }
-        bool HasValue { get; }
-        DataRetrievalStatus Status { get; }
-    }
-
-    public class DataStore<TKey, TEntity> : IDataStore<TKey, TEntity>
-        where TKey : IEquatable<TKey>, new()
-        where TEntity : Entity<TKey>
-    {
-        private DataStore(TEntity? value, TimeSpan duration, DataRetrievalStatus dataRetrievalStatus)
+        private DataStore(TEntity value, TimeSpan duration, DataRetrievalStatus dataRetrievalStatus)
         {
-            Value = value;
+            Value = Guard.Against.Null(value, nameof(value));
             Duration = duration;
             Status = dataRetrievalStatus;
         }
@@ -32,49 +17,49 @@ namespace Sweaj.Patterns.Data.Services
         public static DataStore<TKey, TEntity> FromDatabase(
             Func<TEntity> getValueDelegate)
         {
-            return FromValue(getValueDelegate, DataRetrievalStatus.Database);
+            return From(getValueDelegate, DataRetrievalStatus.Database);
         }
 
         public static async Task<DataStore<TKey, TEntity>> FromDatabaseAsync(
             Func<Task<TEntity>> getValueDelegate)
         {
-            return await FromValueAsync(getValueDelegate, DataRetrievalStatus.Database);
+            return await FromAsync(getValueDelegate, DataRetrievalStatus.Database);
         }
 
         public static DataStore<TKey, TEntity> FromCache(
             Func<TEntity> getValueDelegate)
         {
-            return FromValue(getValueDelegate, DataRetrievalStatus.Cache);
+            return From(getValueDelegate, DataRetrievalStatus.Cache);
         }
 
         public static async Task<DataStore<TKey, TEntity>> FromCacheAsync(
             Func<Task<TEntity>> getValueDelegate)
         {
-            return await FromValueAsync(getValueDelegate, DataRetrievalStatus.Cache);
+            return await FromAsync(getValueDelegate, DataRetrievalStatus.Cache);
         }
 
         public static DataStore<TKey, TEntity> FromFile(
             Func<TEntity> getValueDelegate)
         {
-            return FromValue(getValueDelegate, DataRetrievalStatus.File);
+            return From(getValueDelegate, DataRetrievalStatus.File);
         }
 
         public static async Task<DataStore<TKey, TEntity>> FromFileAsync(Func<Task<TEntity>> getValueDelegate)
         {
-            return await FromValueAsync(getValueDelegate, DataRetrievalStatus.File);
+            return await FromAsync(getValueDelegate, DataRetrievalStatus.File);
         }
 
         public static DataStore<TKey, TEntity> FromWebResource(Func<TEntity> getValueDelegate)
         {
-            return FromValue(getValueDelegate, DataRetrievalStatus.WebResource);
+            return From(getValueDelegate, DataRetrievalStatus.WebResource);
         }
 
         public static async Task<DataStore<TKey, TEntity>> FromWebResourceAsync(Func<Task<TEntity>> getValueDelegate)
         {
-            return await FromValueAsync(getValueDelegate, DataRetrievalStatus.WebResource);
+            return await FromAsync(getValueDelegate, DataRetrievalStatus.WebResource);
         }
 
-        private static DataStore<TKey, TEntity> FromValue(
+        private static DataStore<TKey, TEntity> From(
             Func<TEntity> getValueDelegate, DataRetrievalStatus dataRetrievalStatus)
         {
             var time = Stopwatch.StartNew();
@@ -90,7 +75,7 @@ namespace Sweaj.Patterns.Data.Services
             return dataStore;
         }
 
-        private static async Task<DataStore<TKey, TEntity>> FromValueAsync(
+        private static async Task<DataStore<TKey, TEntity>> FromAsync(
             Func<Task<TEntity>> getValueDelegate, DataRetrievalStatus dataRetrievalStatus)
         {
             var startTime = Stopwatch.GetTimestamp();
