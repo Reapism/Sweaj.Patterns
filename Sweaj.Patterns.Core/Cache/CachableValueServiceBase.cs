@@ -16,9 +16,9 @@
         protected virtual void AdditionalCacheKeyValidations(CacheKey cacheKey, TParameters parameters)
         { }
 
-        // Must implement own version.
-        protected abstract CacheKeyFormat CacheKeyFormat { get; init; }
         protected abstract string[] GetOrderedCacheKeySegments(TParameters parameters);
+
+        protected abstract string CacheKeyFormat { get; }
 
         /// <summary>
         /// Intended to be called in the during object initialization of the derived type.

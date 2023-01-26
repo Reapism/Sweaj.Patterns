@@ -10,7 +10,7 @@ namespace Sweaj.Patterns.Cache
         private CacheStore(CacheRequest cacheRequest, ValueResultStatus status, T value)
         {
             CacheRequest = cacheRequest;
-            Status = status;
+
             Value = Guard.Against.Null<T>(value, nameof(value));
         }
 
@@ -18,7 +18,6 @@ namespace Sweaj.Patterns.Cache
         {
             CacheRequest = CacheRequest.From(cacheRequest);
 
-            Status = status;
             Value = Guard.Against.Null<T>(value, nameof(value));
         }
 
@@ -37,9 +36,28 @@ namespace Sweaj.Patterns.Cache
         {
             return new CacheStore<T>(default(CacheRequest), ValueResultStatus.Empty, default);
         }
-
-
-
+        
+        /// <summary>
+        /// Creates a new instance of <see cref="CacheStore{T}"/> that represents a value obtained from a <see cref="ValueResultStatus.Empty"/>.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>A default value <see cref="CacheStore{T}"/> that has a 
+        /// <see cref="ValueResultStatus.Empty"/> status.</returns>
+        public static CacheStore<T> FromRequestEmptyValue(CacheRequest<T> cacheRequest)
+        {
+            return new CacheStore<T>(cacheRequest, ValueResultStatus.Empty, default);
+        }
+        
+                /// <summary>
+        /// Creates a new instance of <see cref="CacheStore{T}"/> that represents a value obtained from a <see cref="ValueResultStatus.Empty"/>.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>A default value <see cref="CacheStore{T}"/> that has a 
+        /// <see cref="ValueResultStatus.Empty"/> status.</returns>
+        public static CacheStore<T> FromRequestEmptyValue(CacheRequest cacheRequest)
+        {
+            return new CacheStore<T>(cacheRequest, ValueResultStatus.Empty, default);
+        }
         /// <summary>
         /// Creates a new instance of <see cref="CacheStore{T}"/> that represents a value obtained from a <see cref="ValueResultStatus.Cache"/>.
         /// </summary>
