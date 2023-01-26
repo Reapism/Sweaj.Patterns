@@ -21,7 +21,7 @@ namespace Sweaj.Patterns.Data.Entities
 
     /// <summary>
     /// A base entity with generic type identifier and support for holding
-    /// events, and uses t.
+    /// events, and uses a generic key type.
     /// </summary>
     public class Entity<TKey> : IDomainEventProvider, IEmpty
         where TKey : IEquatable<TKey>, new()
@@ -29,14 +29,14 @@ namespace Sweaj.Patterns.Data.Entities
         public TKey Id { get; protected set; } = new();
 
         public List<DomainEvent> Events { get; } = new();
+        
         public virtual bool IsEmpty() => Id.Equals(Empty().Id);
 
         public virtual Entity<TKey> Empty() => new();
     }
 
     public abstract class PolymorphicEntity : PolymorphicEntity<Guid>
-    {
-    }
+    { }
 
     public abstract class PolymorphicEntity<TKey> : Entity<TKey>, IReferenceable<TKey>
         where TKey : IEquatable<TKey>, new()
