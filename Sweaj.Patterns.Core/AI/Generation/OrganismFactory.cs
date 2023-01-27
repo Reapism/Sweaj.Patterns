@@ -15,8 +15,15 @@ namespace Sweaj.Patterns.AI.Generation
     public static class OrganismFactory
     {
         // Cache the list of properties and fields marked with the Gene attribute in the Organism struct
-        private static readonly PropertyInfo[] geneProperties = typeof(Organism).GetProperties().Where(p => p.GetCustomAttribute<GeneAttribute>() != null).ToArray();
-        private static readonly FieldInfo[] geneFields = typeof(Organism).GetFields().Where(f => f.GetCustomAttribute<GeneAttribute>() != null).ToArray();
+        private static readonly PropertyInfo[] geneProperties = typeof(Organism)
+            .GetProperties()
+            .Where(p => p.GetCustomAttribute<GeneAttribute>() is not null)
+            .ToArray();
+
+        private static readonly FieldInfo[] geneFields = typeof(Organism)
+            .GetFields()
+            .Where(f => f.GetCustomAttribute<GeneAttribute>() is not null)
+            .ToArray();
 
         // Preallocate a fixed number of Organism structs
         private static readonly Organism[] organisms = new Organism[100];
