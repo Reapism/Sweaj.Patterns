@@ -12,9 +12,10 @@ namespace Sweaj.Patterns.Data.Services
         public ValueResultStatus ValueResultStatus { get; }
         private ValueStore(TValue value, ValueResultStatus valueResultStatus)
         {
-            Value = value
+            Value = value;
             ValueResultStatus = valueResultStatus;
         }
+        
         public static ValueStore<TValue> FromEmpty()
         {
             return new ValueStore<TValue>(default, ValueResultStatus.Empty);

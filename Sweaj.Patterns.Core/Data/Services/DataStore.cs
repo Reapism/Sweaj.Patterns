@@ -69,8 +69,7 @@ namespace Sweaj.Patterns.Data.Services
             time.Stop();
             var duration = time.Elapsed;
 
-            var status = GetDataRetrievalStatusOrEmpty(value, dataRetrievalStatus);
-            var dataStore = new DataStore<TKey, TEntity>(value, duration, status);
+            var dataStore = new DataStore<TKey, TEntity>(value, duration, dataRetrievalStatus);
 
             return dataStore;
         }
@@ -85,23 +84,9 @@ namespace Sweaj.Patterns.Data.Services
             var endTime = Stopwatch.GetTimestamp();
             var duration = Stopwatch.GetElapsedTime(startTime, endTime);
 
-            var status = GetDataRetrievalStatusOrEmpty(value, dataRetrievalStatus);
-            var dataStore = new DataStore<TKey, TEntity>(value, duration, status);
+            var dataStore = new DataStore<TKey, TEntity>(value, duration, dataRetrievalStatus);
 
             return dataStore;
-        }
-
-        private static DataRetrievalStatus GetDataRetrievalStatusOrEmpty(TEntity? entity, DataRetrievalStatus dataRetrievalStatus)
-        {
-            var entityExists = entity is not null;
-
-            if (!entityExists)
-            {
-                DataRetrievalStatus emptyStatus = (DataRetrievalStatus)(int)dataRetrievalStatus++;
-                return emptyStatus;
-            }
-
-            return dataRetrievalStatus;
         }
 
         public TEntity Value { get; } = default(TEntity);
