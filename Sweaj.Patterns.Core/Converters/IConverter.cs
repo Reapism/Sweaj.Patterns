@@ -1,4 +1,4 @@
-﻿namespace Sweaj.Patterns.Scientific
+﻿namespace Sweaj.Patterns.Converters
 {
     public interface IConverter<TValue, TReturn>
     {
