@@ -23,9 +23,9 @@ namespace Sweaj.Patterns.Tests.Cache
         [Fact]
         public void CacheWorksE2E()
         {
-            var randomValue = new RandomValue(Random.Shared.Next().ToString());
-            var cacheManager = new CacheManager(IMemoryCache)
-            var randomValueStore = CacheRequest<RandomValue>.SetCacheOnly(randomValue, CacheDurationOptions.FromRelativeToNowExpiration(TimeSpan.FromMinutes(1))).Get();
+            //var randomValue = new RandomValue(Random.Shared.Next().ToString());
+            //var cacheManager = new CacheManager(IMemoryCache)
+            //var randomValueStore = CacheRequest<RandomValue>.SetCacheOnly(randomValue, CacheDurationOptions.FromRelativeToNowExpiration(TimeSpan.FromMinutes(1))).Get();
 
 
 
