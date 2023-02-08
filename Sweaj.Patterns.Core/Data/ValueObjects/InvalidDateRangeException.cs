@@ -4,3 +4,4 @@
     {
         public InvalidDateRangeException(string message) : base(message) { }
     }
+}
