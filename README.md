@@ -1,6 +1,8 @@
 # Sweaj.Patterns
 A library intended for easily adapting a familiar & flexible abstraction of many patterns I use today.
 
+[![.NET](https://github.com/Reapism/Sweaj.Patterns/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Reapism/Sweaj.Patterns/actions/workflows/dotnet.yml)
+
 # Repository
 Creating a generic repository that is fully flexible, all the way from its type, to its Key Type
 
