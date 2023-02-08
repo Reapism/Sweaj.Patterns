@@ -13,31 +13,31 @@ namespace Sweaj.Patterns.Tests
         [InlineData("123 Main St", "Anytown", "NY", "123456789", "USA", false)]
         public void ValidatePostalCode_ReturnsExpectedResult(string street, string city, string state, string zip, string country, bool expected)
         {
-            // Arrange
-            var address = Address.Create(street, city, state, zip, country);
+            if (expected)
+            {
+                var address = Address.Create(street, city, state, zip, country);
+                Assert.NotNull(address);
+            }
+            else
+            {
+                Assert.Throws<ArgumentException>(() => Address.Create(street, city, state, zip, country) is not null);
 
-            // Act
-            var result = Address.ValidatePostalCode(zip);
-
-            // Assert
-            Assert.Equal(expected, result);
+            }
         }
 
         [Theory]
-        [InlineData("123 Main St", "Anytown", "NY", "12345", "USA", "Anytown, NY")]
-        [InlineData("123 Main St", "Anytown", "NY", "12345", "USA", "123 Main St, Anytown, NY, 12345, USA")]
-        public void ToString_ReturnsExpectedResult(string street, string city, string state, string zip, string country, string expected)
+        [InlineData("123 Main St", "Anytown", "NY", "12345", "USA", "Anytown, NY", AddressFormat.Short)]
+        [InlineData("123 Main St", "Anytown", "NY", "12345", "USA", "123 Main St, Anytown, NY, 12345, USA", AddressFormat.Long)]
+        public void ToString_ReturnsExpectedResult(string street, string city, string state, string zip, string country, string expected, AddressFormat addressFormat)
         {
             // Arrange
             var address = Address.Create(street, city, state, zip, country);
 
             // Act
-            var shortResult = address.ToString(AddressFormat.Short);
-            var longResult = address.ToString(AddressFormat.Long);
+            var result = address.ToString(addressFormat);
 
             // Assert
-            Assert.Equal(expected, shortResult);
-            Assert.Equal(expected, longResult);
+            Assert.Equal(expected, result);
         }
 
         [Theory]
