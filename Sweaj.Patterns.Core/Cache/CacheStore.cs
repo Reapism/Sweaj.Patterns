@@ -1,6 +1,5 @@
 ﻿using Sweaj.Patterns.Data.Services;
 using Sweaj.Patterns.Data.Statuses;
-using Sweaj.Patterns.Mapping;
 using Sweaj.Patterns.NullObject;
 
 namespace Sweaj.Patterns.Cache
@@ -36,7 +35,7 @@ namespace Sweaj.Patterns.Cache
         {
             return new CacheStore<T>(default(CacheRequest), ValueResultStatus.Empty, default);
         }
-        
+
         /// <summary>
         /// Creates a new instance of <see cref="CacheStore{T}"/> that represents a value obtained from a <see cref="ValueResultStatus.Empty"/>.
         /// </summary>
@@ -47,8 +46,8 @@ namespace Sweaj.Patterns.Cache
         {
             return new CacheStore<T>(cacheRequest, ValueResultStatus.Empty, default);
         }
-        
-                /// <summary>
+
+        /// <summary>
         /// Creates a new instance of <see cref="CacheStore{T}"/> that represents a value obtained from a <see cref="ValueResultStatus.Empty"/>.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -91,7 +90,7 @@ namespace Sweaj.Patterns.Cache
         }
 
         public ValueStore<T> AsValueStore()
-        {   
+        {
             return ValueStore<T>.FromCache(this);
         }
     }
