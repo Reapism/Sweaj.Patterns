@@ -3,15 +3,21 @@
 
 name: .NET
 
+env:
+  CS_PROJ_FILE: Sweaj.Patterns/Sweaj.Patterns.csproj
+  ENVIRONMENT: development
+
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      - develop
+      - staging
   pull_request:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  execution:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +25,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 7.0.x
 
     - name: Restore dependencies
       run: dotnet restore
@@ -35,3 +41,55 @@ jobs:
       env:
         NUGET_KEY: ${{ secrets.SWEAJ_NUGET_KEY }}
 
+  update-package-version:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Determine environment
+        run: |
+          if [ "$GITHUB_REF" == "main" ]; then
+            echo "Setting environment to production."
+            env:
+              ENVIRONMENT: production
+          elif [ "$GITHUB_REF" == "staging" ]; then
+            echo "Setting environment to staging."
+            env:
+              ENVIRONMENT: staging
+          else
+            echo "Setting environment to development."
+          fi
+
+      - name: Check if changes are on main branch
+        run: |
+          if [ "$ENVIRONMENT" == "production" ]; then
+            echo "Changes are not on main branch, skipping modification of .csproj file."
+            exit 0
+          fi
+      
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Check if changes are on main branch
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "Changes are not on main branch, skipping modification of .csproj file."
+            exit 0
+          fi
+      
+      - name: Modify version in .csproj file
+        run: |
+          year=$(date +%y)
+          month=$(date +%m)
+          patch=$(git rev-list HEAD --count --since=$year-$month-01T00:00:00Z --until=$year-$month-31T23:59:59Z)
+          if [ "$patch" -gt 0 ]; then
+            patch=$((patch - 1))
+          fi
+          sed -i "s/<Version>.*<\/Version>/<Version>$year.$month.$patch<\/Version>/g" ${{ env.CS_PROJ_FILE }}
+      
+      - name: Commit and push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          branch: main
+          message: "Modified version of project"
+          username: ${{ secrets.GITHUB_ACTOR }}
+          password: ${{ secrets.GITHUB_TOKEN }}
