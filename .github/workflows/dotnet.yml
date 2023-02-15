@@ -44,11 +44,8 @@ jobs:
     needs: build-test
 
     steps:
-    - name: LS
-      run: ls . && ls ..
-
     - name: Publish
-      run: dotnet publish $CS_PROJ_FILE --configuration $BUILD --output nuget/
+      run: dotnet publish --configuration $BUILD --output nuget/
 
     - name: Publish NuGet 
       run: dotnet nuget push nuget/*.nupkg --api-key $NUGET_KEY --source https://api.nuget.org/v3/index.json
