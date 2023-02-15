@@ -11,14 +11,15 @@ env:
   BUILD: release
   TEST_BUILD: release
   NUGET_KEY: ${{ secrets.SWEAJ_NUGET_KEY }}
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
 on:
-  push:
-    branches:
-      - main
-      - develop
-      - staging
+  #push:
+  #  branches:
+  #    - main
+  #    - develop
+  #    - staging
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "staging", "develop" ]
 
 jobs:
   build-test:
@@ -47,29 +48,13 @@ jobs:
     steps:
 
     - name: ls.
-      run: ls .
-
-
-    - name: ls..
-      run: ls ..
-
-    - name: ls../..
-      run: ls ../..
-
-    - name: ls ./src
-      run: ls ./src
-
-    - name: ls .src/
-      run: ls .src
-
-    - name: ls ..tests
-      run: ls ./tests
+      run: echo $GITHUB_REF
 
     - name: Publish
       run: dotnet publish $PUBLISH_PROJECT_NAME --configuration $BUILD --output nuget/
 
     - name: Publish NuGet 
-      run: dotnet nuget push nuget/*.nupkg --api-key $NUGET_KEY --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push nuget/*.nupkg --api-key $NUGET_KEY --source $NUGET_SOURCE
       working-directory: .
 
   update-package-version:
