@@ -7,7 +7,7 @@ env:
   CS_PROJ_FILE: Sweaj.Patterns/Sweaj.Patterns.csproj
   ENVIRONMENT: development
   BUILD: release
-
+  NUGET_KEY: ${{ secrets.SWEAJ_NUGET_KEY }}
 on:
   push:
     branches:
@@ -34,13 +34,19 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release
 
+  test:
+    runs-on: ubuntu-latest
+
+    steps: 
     - name: Test
       run: dotnet test --configuration Release --no-build
 
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
     - name: Publish
-      run: dotnet publish $ENVIRONMENT --configuration $BUILD --output nuget/
-      env:
-        NUGET_KEY: ${{ secrets.SWEAJ_NUGET_KEY }}
+      run: dotnet publish --configuration $BUILD --output nuget/ $CS_PROJ_FILE
 
   update-package-version:
     runs-on: ubuntu-latest
