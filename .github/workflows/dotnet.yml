@@ -4,7 +4,7 @@
 name: .NET
 
 env:
-  CS_PROJ_FILE: Sweaj.Patterns/Sweaj.Patterns.csproj
+  CS_PROJ_FILE: src/Sweaj.Patterns/Sweaj.Patterns.csproj
   ENVIRONMENT: development
   BUILD: release
   TEST_BUILD: release
