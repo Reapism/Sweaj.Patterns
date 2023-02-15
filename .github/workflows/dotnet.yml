@@ -6,7 +6,7 @@ name: .NET
 env:
   CS_PROJ_FILE: Sweaj.Patterns/Sweaj.Patterns.csproj
   ENVIRONMENT: development
-  BUILD: debug
+  BUILD: release
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
       run: dotnet test --configuration Release --no-build
 
     - name: Publish
-      run: dotnet publish --configuration Release --output nuget/
+      run: dotnet publish $ENVIRONMENT --configuration $BUILD --output nuget/
       env:
         NUGET_KEY: ${{ secrets.SWEAJ_NUGET_KEY }}
 
