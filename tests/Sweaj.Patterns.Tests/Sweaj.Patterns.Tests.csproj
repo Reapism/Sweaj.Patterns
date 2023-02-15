@@ -27,7 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Sweaj.Patterns.Core\Sweaj.Patterns.csproj" />
+	  <ProjectReference Include="..\..\src\Sweaj.Patterns\Sweaj.Patterns.csproj" />
 	</ItemGroup>
 
 </Project>
