@@ -56,14 +56,14 @@ jobs:
     - name: ls../..
       run: ls ../..
 
-    - name: ls /src
-      run: ls /src
+    - name: ls ./src
+      run: ls ./src
 
-    - name: ls src/
-      run: ls src
+    - name: ls .src/
+      run: ls .src
 
-    - name: ls tests
-      run: ls tests
+    - name: ls ..tests
+      run: ls ./tests
 
     - name: Publish
       run: dotnet publish $PUBLISH_PROJECT_NAME --configuration $BUILD --output nuget/
