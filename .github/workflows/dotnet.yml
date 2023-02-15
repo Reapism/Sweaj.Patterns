@@ -5,6 +5,7 @@ name: .NET CI/CD pipeline
 
 env:
   CS_PROJ_FILE: src/Sweaj.Patterns/Sweaj.Patterns.csproj
+  PUBLISH_WORKING_DIR: src/Sweaj.Patterns/
   ENVIRONMENT: development
   BUILD: release
   TEST_BUILD: release
@@ -41,12 +42,17 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: build-test
+
     steps:
+    - name: LS
+      run: ls src/ && nuget/ && ls src/Sweaj.Patterns
+
     - name: Publish
-      run: ls $CS_PROJ_FILE && dotnet publish $CS_PROJ_FILE --configuration $BUILD --output nuget/
+      run: dotnet publish $CS_PROJ_FILE --configuration $BUILD --output nuget/
 
     - name: Publish NuGet 
       run: dotnet nuget push nuget/*.nupkg --api-key $NUGET_KEY --source https://api.nuget.org/v3/index.json
+      working-directory: .
 
   update-package-version:
     runs-on: ubuntu-latest
