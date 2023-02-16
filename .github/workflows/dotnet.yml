@@ -29,7 +29,7 @@ on:
       - develop 
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -46,10 +46,14 @@ jobs:
       run: dotnet build ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }}
 
     - name: Test
-      run: dotnet test ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }}
+      run: dotnet test ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --no-build
 
+  publish:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
     - name: Publish package
-      run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --version-suffix $GITHUB_RUN_NUMBER --output ${{ env.PACKAGE_DIRECTORY }}
+      run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --output ${{ env.PACKAGE_DIRECTORY }}
 
     - name: Push package to NuGet
-      run: dotnet nuget push ${{ env.PACKAGE_DIRECTORY }}*.nupkg --api-key ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push ${{ env.PACKAGE_DIRECTORY }}/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source "${{ env.NUGET_REPOSITORY_URL }}"
