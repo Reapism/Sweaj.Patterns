@@ -50,7 +50,8 @@ jobs:
       run: dotnet publish $PUBLISH_PROJECT_NAME --configuration $BUILD_CONFIG --output nuget/
 
     - name: Publish NuGet 
-      run: dotnet nuget push ../nuget/*.nupkg --api-key $NUGET_KEY --source $NUGET_SOURCE
+      working-directory: ./Sweaj.Patterns/src/Sweaj.Patterns/nuget/
+      run: dotnet nuget push *.nupkg --api-key $NUGET_KEY --source $NUGET_SOURCE
 
   publish:
     runs-on: ubuntu-latest
