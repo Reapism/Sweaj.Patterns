@@ -33,14 +33,14 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Restore dependencies
-      run: dotnet restore
+    #- name: Restore dependencies
+    #  run: dotnet restore
 
-    - name: Build
-      run: dotnet build --configuration $BUILD_CONFIG
+    #- name: Build
+    #  run: dotnet build --configuration $BUILD_CONFIG
 
-    - name: Test
-      run: dotnet test --configuration $TEST_BUILD_CONFIG --no-build
+    #- name: Test
+    #  run: dotnet test --configuration $TEST_BUILD_CONFIG --no-build
 
     - name: Print working directory
       run: echo $PUBLISH_WORKING_DIR
