@@ -7,11 +7,11 @@ env:
   CS_PROJ_FILE: src/Sweaj.Patterns/Sweaj.Patterns.csproj
   DOTNET_VERSION: 7.0.x
   PUBLISH_WORKING_DIR: src/Sweaj.Patterns/
-  NUGET_DIR: ~/nuget
   PUBLISH_PROJECT_NAME: Sweaj.Patterns.csproj
   ENVIRONMENT: Development
   BUILD_CONFIG: Release
   TEST_BUILD_CONFIG: Release
+  NUGET_DIR: ~/nuget
   NUGET_KEY: ${{ secrets.SWEAJ_NUGET_KEY }}
   NUGET_SOURCE: https://api.nuget.org/v3/index.json
 on:
@@ -54,7 +54,7 @@ jobs:
       run: echo $PUBLISH_WORKING_DIR
 
     - name: Publish NuGet 
-      working-directory: ${{ NUGET_DIR }}
+      working-directory: ${{ env.NUGET_DIR }}
       run: dotnet nuget push *.nupkg --api-key $NUGET_KEY --source $NUGET_SOURCE
 
   publish:
