@@ -54,7 +54,7 @@ jobs:
       run: echo $PUBLISH_WORKING_DIR
 
     - name: Publish NuGet 
-      working-directory: $NUGET_DIR
+      working-directory: ${{ NUGET_DIR }}
       run: dotnet nuget push *.nupkg --api-key $NUGET_KEY --source $NUGET_SOURCE
 
   publish:
