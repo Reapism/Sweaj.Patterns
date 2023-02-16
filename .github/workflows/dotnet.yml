@@ -48,10 +48,6 @@ jobs:
     - name: Test
       run: dotnet test ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --no-build
 
-  publish:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    steps:
     - name: Publish package
       run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --output ${{ env.PACKAGE_DIRECTORY }}
 
