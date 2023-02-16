@@ -16,7 +16,6 @@
 		<PackageProjectUrl>https://github.com/Reapism/Sweaj.Patterns/wiki</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Reapism/Sweaj.Patterns</RepositoryUrl>
 		<SourceGenerators>Sweaj.Patterns.Tests.ClassGenerator</SourceGenerators>
-		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -30,7 +29,7 @@
 
 	<ItemGroup>
 		<None Include="..\.editorconfig" Link=".editorconfig" />
-		<None Include="..\README.md">
+		<None Include="..\..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
