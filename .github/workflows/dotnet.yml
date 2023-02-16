@@ -19,9 +19,6 @@ env:
   # The directory to publish the package to
   PACKAGE_DIRECTORY: nuget/
 
-  # The API key for the NuGet repository
-  NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-
   # The URL of the NuGet repository to publish the package to
   NUGET_REPOSITORY_URL: https://api.nuget.org/v3/index.json
 
@@ -55,4 +52,4 @@ jobs:
       run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --version-suffix $GITHUB_RUN_NUMBER --output ${{ env.PACKAGE_DIRECTORY }}
 
     - name: Push package to NuGet
-      run: dotnet nuget push ${{ env.PACKAGE_DIRECTORY }}*.nupkg --api-key ${{ env.NUGET_API_KEY }}
+      run: dotnet nuget push ${{ env.PACKAGE_DIRECTORY }}*.nupkg --api-key ${{ secrets.NUGET_API_KEY }}
