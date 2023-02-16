@@ -53,4 +53,4 @@ jobs:
       id: pack
 
     - name: Push package to NuGet
-      run: dotnet nuget push ${{ steps.pack.outputs.packOutputFile }} --api-key ${{ secrets.NUGET_API_KEY }} --source "${{ env.NUGET_REPOSITORY_URL }}"
+      run: dotnet nuget push ${{ steps.pack.outputs.packOutputFile }} --api-key ${{ secrets.NUGET_API_KEY }} --source "${{ env.NUGET_REPOSITORY_URL }}" 
