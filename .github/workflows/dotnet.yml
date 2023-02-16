@@ -43,11 +43,11 @@ jobs:
       run: dotnet test --configuration $TEST_BUILD_CONFIG --no-build
 
     - name: Publish
+      working-directory: ${{ env.PUBLISH_WORKING_DIR }}
       run: dotnet publish $PUBLISH_PROJECT_NAME --configuration $BUILD_CONFIG --output nuget/
 
     - name: Publish NuGet 
       run: dotnet nuget push nuget/*.nupkg --api-key $NUGET_KEY --source $NUGET_SOURCE
-      working-directory: .
 
   publish:
     runs-on: ubuntu-latest
