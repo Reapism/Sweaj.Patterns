@@ -1,122 +1,57 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
 name: .NET CI/CD pipeline
 
 env:
-  CS_PROJ_FILE: src/Sweaj.Patterns/Sweaj.Patterns.csproj
+  # The name of the project to build and package
+  PROJECT_NAME: Sweaj.Patterns
+
+  # The path to the project file to build and package
+  PROJECT_FILE: src/Sweaj.Patterns/Sweaj.Patterns.csproj
+
+  # The dotnet version to build and publish with
   DOTNET_VERSION: 7.0.x
-  PUBLISH_WORKING_DIR: src/Sweaj.Patterns/
-  PUBLISH_PROJECT_NAME: Sweaj.Patterns.csproj
-  ENVIRONMENT: Development
-  BUILD_CONFIG: Release
-  TEST_BUILD_CONFIG: Release
-  NUGET_DIR: ~/nuget
-  NUGET_KEY: ${{ secrets.SWEAJ_NUGET_KEY }}
-  NUGET_SOURCE: https://api.nuget.org/v3/index.json
+
+  # The build configuration to use (e.g. Debug or Release)
+  BUILD_CONFIGURATION: Release
+
+  # The version number to use for the package
+  PACKAGE_VERSION: 1.0.0
+
+  # The directory to publish the package to
+  PACKAGE_DIRECTORY: nuget/
+
+  # The API key for the NuGet repository
+  NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+  # The URL of the NuGet repository to publish the package to
+  NUGET_REPOSITORY_URL: https://api.nuget.org/v3/index.json
+
 on:
-  #push:
-  #  branches:
-  #    - main
-  #    - develop
-  #    - staging
-  pull_request:
-    branches: [ "main", "staging", "develop" ]
+  push:
+    branches:
+      - main
 
 jobs:
-  build-test:
+  build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET
+
+    - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    #- name: Restore dependencies
-    #  run: dotnet restore
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.PROJECT_FILE }}
 
-    #- name: Build
-    #  run: dotnet build --configuration $BUILD_CONFIG
+    - name: Build
+      run: dotnet build ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} -f ${{ env.DOTNET_VERSION }}
 
-    #- name: Test
-    #  run: dotnet test --configuration $TEST_BUILD_CONFIG --no-build
+    - name: Test
+      run: dotnet test ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} -f ${{ env.DOTNET_VERSION }}
 
-    - name: Print working directory
-      run: echo $PUBLISH_WORKING_DIR
+    - name: Publish package
+      run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} -f ${{ env.DOTNET_VERSION }} --version-suffix $GITHUB_RUN_NUMBER --output ${{ env.PACKAGE_DIRECTORY }}
 
-    - name: Publish
-      working-directory: ${{ env.PUBLISH_WORKING_DIR }}
-      run: dotnet publish $PUBLISH_PROJECT_NAME --configuration $BUILD_CONFIG --output $NUGET_DIR
-
-    - name: Print working directory
-      run: echo $PUBLISH_WORKING_DIR
-
-    - name: Publish NuGet 
-      working-directory: ${{ env.NUGET_DIR }}
-      run: dotnet nuget push *.nupkg --api-key $NUGET_KEY --source $NUGET_SOURCE
-
-  publish:
-    runs-on: ubuntu-latest
-    needs: build-test
-
-    steps:
-
-    - name: ls.
-      run: echo $GITHUB_REF
-
-   
-
-  update-package-version:
-    runs-on: ubuntu-latest
-    needs: publish
-    steps:
-      - name: Determine environment
-        run: |
-          if [ "$GITHUB_REF" == "main" ]; then
-            echo "Setting environment to production."
-            env:
-              ENVIRONMENT: production
-          elif [ "$GITHUB_REF" == "staging" ]; then
-            echo "Setting environment to staging."
-            env:
-              ENVIRONMENT: staging
-          else
-            echo "Setting environment to development."
-          fi
-
-      - name: Check if changes are on main branch
-        run: |
-          if [ "$ENVIRONMENT" == "production" ]; then
-            echo "Changes are not on main branch, skipping modification of .csproj file."
-            exit 0
-          fi
-      
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      
-      - name: Check if changes are on main branch
-        run: |
-          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
-            echo "Changes are not on main branch, skipping modification of .csproj file."
-            exit 0
-          fi
-      
-      - name: Modify version in .csproj file
-        run: |
-          year=$(date +%y)
-          month=$(date +%m)
-          patch=$(git rev-list HEAD --count --since=$year-$month-01T00:00:00Z --until=$year-$month-31T23:59:59Z)
-          if [ "$patch" -gt 0 ]; then
-            patch=$((patch - 1))
-          fi
-          sed -i "s/<Version>.*<\/Version>/<Version>$year.$month.$patch<\/Version>/g" ${{ env.CS_PROJ_FILE }}
-      
-      - name: Commit and push changes
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          branch: main
-          message: "Modified version of project"
-          username: ${{ secrets.GITHUB_ACTOR }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Push package to NuGet
+      run: dotnet nuget push ${{ env.PACKAGE_DIRECTORY }}/*.nupkg --api-key ${{ env.NUGET_API_KEY }} --source ${{ env.NUGET_REPOSITORY_URL }}
