@@ -29,7 +29,7 @@ on:
       - develop 
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -48,8 +48,19 @@ jobs:
     - name: Test
       run: dotnet test ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --no-build
 
-    - name: Publish package
-      run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --output ${{ env.PACKAGE_DIRECTORY }}
+    - name: Pack
+      run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --version-suffix $GITHUB_RUN_NUMBER --output ${{ env.PACKAGE_DIRECTORY }}
+      id: pack
+      continue-on-error: true
 
+  publish:
+    needs: build
+    
+    runs-on: ubuntu-latest
+    
+    if: ${{ success() && steps.pack.outcome == 'success' }}
+    
+    steps:
+   
     - name: Push package to NuGet
-      run: dotnet nuget push ${{ env.PACKAGE_DIRECTORY }}*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source "${{ env.NUGET_REPOSITORY_URL }}"
+      run: dotnet nuget push ${{ steps.pack.outputs.packOutputFile }} --api-key ${{ secrets.NUGET_API_KEY }} --source "${{ env.NUGET_REPOSITORY_URL }}" 
