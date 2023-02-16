@@ -49,6 +49,9 @@ jobs:
       working-directory: ${{ env.PUBLISH_WORKING_DIR }}
       run: dotnet publish $PUBLISH_PROJECT_NAME --configuration $BUILD_CONFIG --output nuget/
 
+    - name: Print working directory
+      run: echo $PUBLISH_WORKING_DIR
+
     - name: Publish NuGet 
       working-directory: nuget/
       run: dotnet nuget push *.nupkg --api-key $NUGET_KEY --source $NUGET_SOURCE
