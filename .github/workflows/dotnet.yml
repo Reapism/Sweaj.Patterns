@@ -55,7 +55,8 @@ jobs:
       id: pack
 
     - name: Push package to NuGet
-      env: ${{ env.PACKAGE_DIRECTORY }}/*.nupkg
+      env: 
+        nuget: ${{ env.PACKAGE_DIRECTORY }}*.nupkg
       run: |
          echo "The file path is $nuget"
          dotnet nuget push $nuget --api-key ${{ env.SWEAJ_NUGET_KEY }} --source "${{ env.NUGET_REPOSITORY_URL }}" 
