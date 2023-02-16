@@ -50,7 +50,7 @@ jobs:
       run: dotnet publish $PUBLISH_PROJECT_NAME --configuration $BUILD_CONFIG --output nuget/
 
     - name: Publish NuGet 
-      run: dotnet nuget push nuget/*.nupkg --api-key $NUGET_KEY --source $NUGET_SOURCE
+      run: dotnet nuget push ../nuget/*.nupkg --api-key $NUGET_KEY --source $NUGET_SOURCE
 
   publish:
     runs-on: ubuntu-latest
