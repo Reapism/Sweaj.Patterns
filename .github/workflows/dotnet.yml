@@ -22,6 +22,8 @@ env:
   # The URL of the NuGet repository to publish the package to
   NUGET_REPOSITORY_URL: https://api.nuget.org/v3/index.json
 
+  SWEAJ_NUGET_KEY: ${{ secrets.SWEAJ_NUGET_KEY }}
+
 on:
   push:
     branches:
@@ -53,4 +55,4 @@ jobs:
       id: pack
 
     - name: Push package to NuGet
-      run: dotnet nuget push ${{ steps.pack.outputs.packOutputFile }} --api-key ${{ secrets.NUGET_API_KEY }} --source "${{ env.NUGET_REPOSITORY_URL }}" 
+      run: dotnet nuget push ${{ steps.pack.outputs.packOutputFile }} --api-key ${{ env.SWEAJ_NUGET_KEY }} --source "${{ env.NUGET_REPOSITORY_URL }}" 
