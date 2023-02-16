@@ -50,17 +50,6 @@ jobs:
 
     - name: Pack
       run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --version-suffix $GITHUB_RUN_NUMBER --output ${{ env.PACKAGE_DIRECTORY }}
-      id: pack
-      continue-on-error: true
-
-  publish:
-    needs: build
     
-    runs-on: ubuntu-latest
-    
-    if: ${{ success() && steps.pack.outcome == 'success' }}
-    
-    steps:
-   
     - name: Push package to NuGet
       run: dotnet nuget push ${{ steps.pack.outputs.packOutputFile }} --api-key ${{ secrets.NUGET_API_KEY }} --source "${{ env.NUGET_REPOSITORY_URL }}" 
