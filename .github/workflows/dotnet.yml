@@ -29,8 +29,7 @@ on:
   push:
     branches:
       - main
-      - develop
-      - staging
+      - develop 
 
 jobs:
   build:
@@ -47,13 +46,13 @@ jobs:
       run: dotnet restore ${{ env.PROJECT_FILE }}
 
     - name: Build
-      run: dotnet build ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} -f ${{ env.DOTNET_VERSION }}
+      run: dotnet build ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }}
 
     - name: Test
-      run: dotnet test ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} -f ${{ env.DOTNET_VERSION }}
+      run: dotnet test ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }
 
     - name: Publish package
-      run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} -f ${{ env.DOTNET_VERSION }} --version-suffix $GITHUB_RUN_NUMBER --output ${{ env.PACKAGE_DIRECTORY }}
+      run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --version-suffix $GITHUB_RUN_NUMBER --output ${{ env.PACKAGE_DIRECTORY }}
 
     - name: Push package to NuGet
       run: dotnet nuget push ${{ env.PACKAGE_DIRECTORY }}/*.nupkg --api-key ${{ env.NUGET_API_KEY }} --source ${{ env.NUGET_REPOSITORY_URL }}
