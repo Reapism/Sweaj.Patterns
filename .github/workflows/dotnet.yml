@@ -16,9 +16,6 @@ env:
   # The directory to publish the package to
   PACKAGE_DIRECTORY: nuget/
 
-  # This is updated and replaced in the steps.
-  PACKAGE_VERSION: 1.0.0 
-
   # The URL of the NuGet repository to publish the package to
   NUGET_REPOSITORY_URL: https://api.nuget.org/v3/index.json
 
@@ -45,6 +42,23 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore ${{ env.PROJECT_FILE }}
+
+    - name: Get package version from project file
+      id: package-version
+      run: echo "::set-output name=version::$(dotnet build ${env.PROJECT_FILE} /property:VersionPrefix=1.0 /v:q /nologo | grep -m1 'Version:' | awk '{print $2}')"
+
+    - name: Check if version already exists on NuGet
+      id: check-version
+      run: |
+        version=$(echo "${{ steps.package-version.outputs.version }}" | cut -d'-' -f1)
+        output=$(dotnet nuget list -s "${{ env.NUGET_REPOSITORY_URL }}" "${{ env.PROJECT_NAME }}" --version "${version}" | grep "${version}")
+        if [ -n "${output}" ]; then
+          echo "Package version ${version} already exists on NuGet. Skipping publish step."
+          echo "::set-output name=version-exists::true"
+        else
+          echo "Package version ${version} does not exist on NuGet. Proceeding with publish step."
+          echo "::set-output name=version-exists::false"
+        fi
 
     - name: Build
       run: dotnet build ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }}

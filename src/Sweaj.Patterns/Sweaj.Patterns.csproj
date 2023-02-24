@@ -4,7 +4,7 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>1.0.2</Version>
+		<Version>1.0.3</Version>
 		<Title>Sweaj.Patterns</Title>
 		<Description>A software library designed for providing common useful abstractions for many types of projects I I work with often, and providing me y abstraction view over it.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
