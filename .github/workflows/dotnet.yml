@@ -13,9 +13,6 @@ env:
   # The build configuration to use (e.g. Debug or Release)
   BUILD_CONFIGURATION: Release
 
-  # The version number to use for the package
-  PACKAGE_VERSION: 1.0.0
-
   # The directory to publish the package to
   PACKAGE_DIRECTORY: nuget/
 
@@ -28,7 +25,6 @@ on:
   push:
     branches:
       - main
-      - develop 
 
 jobs:
   build:
@@ -41,17 +37,23 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
+    - name: Check for grep command
+      run: command -v grep
+
     - name: Restore dependencies
       run: dotnet restore ${{ env.PROJECT_FILE }}
 
     - name: Build
-      run: dotnet build ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }}
+      run: |
+        version=$(dotnet build ${{ env.PROJECT_FILE }} -p:VersionSuffix=$GITHUB_RUN_NUMBER -v q | grep -m1 "Version:")
+        export PACKAGE_VERSION=$(echo $version | cut -d' ' -f2)
+      shell: bash
 
     - name: Test
       run: dotnet test ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --no-build
 
     - name: Pack
-      run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --version-suffix 1.0.${{ github.run_number }} --output ${{ env.PACKAGE_DIRECTORY }}
+      run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --version-suffix ${{ env.PACKAGE_VERSION }} --output ${{ env.PACKAGE_DIRECTORY }}
       id: pack
 
     - name: Push package to NuGet
@@ -59,4 +61,4 @@ jobs:
         nuget: ${{ env.PACKAGE_DIRECTORY }}*.nupkg
       run: |
          echo "The file path is $nuget"
-         dotnet nuget push $nuget --api-key ${{ env.SWEAJ_NUGET_KEY }} --source "${{ env.NUGET_REPOSITORY_URL }}" 
+         dotnet nuget push $nuget --api-key ${{ env.SWEAJ_NUGET_KEY }} --source "${{ env.NUGET_REPOSITORY_URL }}"
