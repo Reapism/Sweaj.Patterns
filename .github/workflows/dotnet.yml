@@ -16,6 +16,9 @@ env:
   # The directory to publish the package to
   PACKAGE_DIRECTORY: nuget/
 
+  # This is updated and replaced in the steps.
+  PACKAGE_VERSION: 1.0.0 
+
   # The URL of the NuGet repository to publish the package to
   NUGET_REPOSITORY_URL: https://api.nuget.org/v3/index.json
 
