@@ -43,28 +43,21 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Check for grep command
-      run: command -v grep
-
     - name: Restore dependencies
       run: dotnet restore ${{ env.PROJECT_FILE }}
 
     - name: Build
-      run: |
-        version=$(dotnet build ${{ env.PROJECT_FILE }} -p:VersionSuffix=$GITHUB_RUN_NUMBER -v d | grep -m1 "Version:")
-        export PACKAGE_VERSION=$(echo $version | cut -d' ' -f2)
-      shell: bash
+      run: dotnet build ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }}
 
     - name: Test
       run: dotnet test ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --no-build
 
     - name: Pack
-      run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --version-suffix ${{ env.PACKAGE_VERSION }} --output ${{ env.PACKAGE_DIRECTORY }}
-      id: pack
+      run: dotnet pack ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }} --output ${{ env.PACKAGE_DIRECTORY }}
 
     - name: Push package to NuGet
       env: 
         nuget: ${{ env.PACKAGE_DIRECTORY }}*.nupkg
       run: |
-         echo "The file path is $nuget"
-         dotnet nuget push $nuget --api-key ${{ env.SWEAJ_NUGET_KEY }} --source "${{ env.NUGET_REPOSITORY_URL }}"
+        echo "The file path is $nuget"
+        dotnet nuget push $nuget --api-key ${{ env.SWEAJ_NUGET_KEY }} --source "${{ env.NUGET_REPOSITORY_URL }}"
