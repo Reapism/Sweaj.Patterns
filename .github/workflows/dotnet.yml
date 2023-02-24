@@ -48,7 +48,7 @@ jobs:
 
     - name: Build
       run: |
-        version=$(dotnet build ${{ env.PROJECT_FILE }} -p:VersionSuffix=$GITHUB_RUN_NUMBER -v | grep -m1 "Version:")
+        version=$(dotnet build ${{ env.PROJECT_FILE }} -p:VersionSuffix=$GITHUB_RUN_NUMBER -v d | grep -m1 "Version:")
         export PACKAGE_VERSION=$(echo $version | cut -d' ' -f2)
       shell: bash
 
