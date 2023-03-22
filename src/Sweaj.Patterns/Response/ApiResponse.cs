@@ -1,26 +1,30 @@
-﻿namespace Sweaj.Patterns.Results
+﻿using Sweaj.Patterns.Response;
+
+namespace Sweaj.Patterns.Responses
 {
-    public class ApiResponse
+    public class ApiResponse : IResult
     {
+        private const string InvalidHttpCodeErrorMessage = "The given http status code is invalid based on the rfc9110 standard.";
+
         protected ApiResponse(string message, int httpStatusCode)
         {
             var trimmedMessage = Guard.Against.NullOrWhiteSpace(message).Trim();
 
+            Id = Guid.NewGuid();
             InternalMessage = trimmedMessage;
             HttpStatusCode = httpStatusCode;
-
-            IsSuccessful = IsSuccessStatusCode(httpStatusCode);
-            IsExceptional = IsServerErrorStatusCode(httpStatusCode);
         }
 
-        public bool IsSuccessful { get; }
-        public bool IsExceptional { get; }
+        public bool IsSuccessful => IsSuccessStatusCode(HttpStatusCode);
+        public bool IsExceptional => IsServerErrorStatusCode(HttpStatusCode);
         public int HttpStatusCode { get; }
 
         public bool HasMessage { get => !string.IsNullOrEmpty(InternalMessage); }
         protected string InternalMessage { get; }
         public string ApiMessage => !IsJsonMessage(InternalMessage[0]) ? InternalMessage : string.Empty;
         public string JsonMessage => IsJsonMessage(InternalMessage[0]) ? InternalMessage : string.Empty;
+
+        public Guid Id { get; }
 
         /// <summary>
         /// Returns whether the <paramref name="httpStatusCode"/> is a valid HTTP status code using rfc9110 standard.
@@ -55,7 +59,7 @@
 
         public static ApiResponse From(string message, int httpStatusCode)
         {
-            return new ApiResponse(message, Guard.Against.AgainstExpression<int>(e => IsHttpStatusCode(e), httpStatusCode, "The given http status code is invalid based on the rfc9110 standard."));
+            return new ApiResponse(message, Guard.Against.AgainstExpression<int>(e => IsHttpStatusCode(e), httpStatusCode, InvalidHttpCodeErrorMessage));
         }
 
         public static ApiResponse Ok(string message = nameof(Ok))
@@ -94,16 +98,15 @@
         }
     }
 
-    public sealed class ApiResponse<T> : ApiResponse
+    public sealed class ApiResponse<T> : ApiResponse, IResult<T>
     {
-        private ApiResponse(string message, int httpStatusCode, T value)
+        private ApiResponse(string message, int httpStatusCode, T result)
             : base(message, httpStatusCode)
         {
-
-            Value = Guard.Against.Null(value); ;
+            Result = Guard.Against.Null(result); ;
         }
 
-        public T Value { get; }
+        public T Result { get; }
 
         public static ApiResponse<T> Ok(T value, string message = nameof(Ok))
         {
