@@ -2,15 +2,15 @@
 
 namespace Sweaj.Patterns.Responses
 {
-    public class ApiResponse : IResult
+    public class ApiResponse : IResult<Guid>
     {
-        private const string InvalidHttpCodeErrorMessage = "The given http status code is invalid based on the rfc9110 standard.";
+        protected const string InvalidHttpCodeErrorMessage = "The given http status code is invalid based on the rfc9110 standard.";
 
         protected ApiResponse(string message, int httpStatusCode)
         {
             var trimmedMessage = Guard.Against.NullOrWhiteSpace(message).Trim();
 
-            Id = Guid.NewGuid();
+            ResultId = Guid.NewGuid();
             InternalMessage = trimmedMessage;
             HttpStatusCode = httpStatusCode;
         }
@@ -24,7 +24,7 @@ namespace Sweaj.Patterns.Responses
         public string ApiMessage => !IsJsonMessage(InternalMessage[0]) ? InternalMessage : string.Empty;
         public string JsonMessage => IsJsonMessage(InternalMessage[0]) ? InternalMessage : string.Empty;
 
-        public Guid Id { get; }
+        public Guid ResultId { get; }
 
         /// <summary>
         /// Returns whether the <paramref name="httpStatusCode"/> is a valid HTTP status code using rfc9110 standard.
@@ -98,7 +98,7 @@ namespace Sweaj.Patterns.Responses
         }
     }
 
-    public sealed class ApiResponse<T> : ApiResponse, IResult<T>
+    public sealed class ApiResponse<T> : ApiResponse
     {
         private ApiResponse(string message, int httpStatusCode, T result)
             : base(message, httpStatusCode)
@@ -108,9 +108,44 @@ namespace Sweaj.Patterns.Responses
 
         public T Result { get; }
 
-        public static ApiResponse<T> Ok(T value, string message = nameof(Ok))
+        public static ApiResponse<T> From(string message, int httpStatusCode, T result)
         {
-            return new ApiResponse<T>(message, 200, value);
+            return new ApiResponse<T>(message, Guard.Against.AgainstExpression<int>(e => IsHttpStatusCode(e), httpStatusCode, InvalidHttpCodeErrorMessage), result);
         }
+        public static ApiResponse<T> Ok(string message = nameof(Ok), T result = default)
+        {
+            return new ApiResponse<T>(message, 200, result);
+        }
+
+        public static ApiResponse<T> Created(string message = nameof(Created), T result = default)
+        {
+            return new ApiResponse<T>(message, 201, result);
+        }
+
+        public static ApiResponse<T> Accepted(string message = nameof(Accepted), T result = default)
+        {
+            return new ApiResponse<T>(message, 202, result);
+        }
+
+        public static ApiResponse<T> BadRequest( string message = nameof(BadRequest), T result = default)
+        {
+            return new ApiResponse<T>(message, 400, result);
+        }
+
+        public static ApiResponse<T> Unauthorized(string message = nameof(Unauthorized), T result = default)
+        {
+            return new ApiResponse<T>(message, 401, result);
+        }
+
+        public static ApiResponse<T> NotFound(string message = nameof(NotFound), T result = default)
+        {
+            return new ApiResponse<T>(message, 404, result);
+        }
+
+        public static ApiResponse<T> ServerExceptional(string message = "The server has encountered a situation it does not know how to handle.")
+        {
+            return new ApiResponse<T>(message, 500, result);
+        }
+
     }
 }
