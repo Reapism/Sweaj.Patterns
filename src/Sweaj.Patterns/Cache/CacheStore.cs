@@ -1,5 +1,5 @@
-﻿using Sweaj.Patterns.Data.Services;
-using Sweaj.Patterns.Data.Statuses;
+﻿using Sweaj.Patterns.Data;
+using Sweaj.Patterns.Data.Services;
 using Sweaj.Patterns.NullObject;
 
 namespace Sweaj.Patterns.Cache

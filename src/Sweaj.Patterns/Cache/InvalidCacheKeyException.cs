@@ -16,7 +16,7 @@ namespace Sweaj.Patterns.Cache
     public sealed class InvalidCacheQueryException : PatternsException 
     {
         public static readonly string DefaultInvalidCacheQueryMessageFormat = "The cache key [{0}] does not match the expected format {1}";
-        public InvalidCacheKeyException(ValueRetrievalMethod valueRetrievalMethod, string cacheKeyFormat)
+        public InvalidCacheQueryException(ValueRetrievalMethod valueRetrievalMethod)
             : base($"The {nameof(ValueRetrievalMethod)} value [{valueRetrievalMethod}] is not supported.")
         { }
     }

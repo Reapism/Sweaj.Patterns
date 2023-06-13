@@ -141,11 +141,5 @@ namespace Sweaj.Patterns.Responses
         {
             return new ApiResponse<T>(message, 404, result);
         }
-
-        public static ApiResponse<T> ServerExceptional(string message = "The server has encountered a situation it does not know how to handle.")
-        {
-            return new ApiResponse<T>(message, 500, result);
-        }
-
     }
 }

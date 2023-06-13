@@ -1,6 +1,5 @@
 ﻿using Sweaj.Patterns.Cache;
 using Sweaj.Patterns.Data.Entities;
-using Sweaj.Patterns.Data.Statuses;
 using Sweaj.Patterns.Mapping;
 using Sweaj.Patterns.NullObject;
 
@@ -15,7 +14,7 @@ namespace Sweaj.Patterns.Data.Services
             Value = value;
             ValueResultStatus = valueResultStatus;
         }
-        
+
         public static ValueStore<TValue> FromEmpty()
         {
             return new ValueStore<TValue>(default, ValueResultStatus.Empty);
@@ -45,7 +44,7 @@ namespace Sweaj.Patterns.Data.Services
             var value = mapper.Convert(dataStore.Value);
             return new ValueStore<TValue>(value, ValueResultStatus.DataStore);
         }
-        
+
         public bool IsEmpty()
         {
             return ValueResultStatus == ValueResultStatus.Empty;
