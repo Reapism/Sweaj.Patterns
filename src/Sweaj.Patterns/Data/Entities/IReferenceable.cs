@@ -1,4 +1,4 @@
-﻿namespace Sweaj.Patterns.Data.Entities
+﻿namespace Sweaj.Patterns.Data
 {
     /// <summary>
     /// Represents a polymorphic object.

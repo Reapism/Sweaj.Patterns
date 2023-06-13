@@ -2,17 +2,17 @@
 {
     public interface IAuditableEntity
     {
-        DateTime LastModifiedDate { get; set; }
+        DateTimeOffset LastModifiedDate { get; set; }
         string LastModifiedByUser { get; set; }
-        DateTime CreatedDate { get; set; }
+        DateTimeOffset CreatedDate { get; set; }
         string CreatedByUser { get; set; }
     }
 
     public abstract class AuditableEntity : Entity, IAuditableEntity
     {
-        public DateTime LastModifiedDate { get; set; }
+        public DateTimeOffset LastModifiedDate { get; set; }
         public string LastModifiedByUser { get; set; } = string.Empty;
-        public DateTime CreatedDate { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }
         public string CreatedByUser { get; set; } = string.Empty;
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Sweaj.Patterns.Data.Entities;
 using System.Linq.Expressions;
 
-namespace Sweaj.Patterns.Data.Repositories
+namespace Sweaj.Patterns.Data
 {
     public interface IReadOnlyRepository
     {
