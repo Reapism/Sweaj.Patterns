@@ -1,11 +1,13 @@
 ﻿namespace Sweaj.Patterns.Cache
 {
+    //TODO convert to interface to make this more flexible.
+    // All functionality can be converted extension methods
     /// <summary>
-    /// Encapsulates cachable behavior for a value.
+    /// Encapsulates cacheable behavior for a value.
     /// </summary>
     /// <typeparam name="TValue">The value to cache.</typeparam>
     /// <typeparam name="TParameters">An object representing all the values needed to construct a unique cache key.</typeparam>
-    public abstract class CachableValueServiceBase<TValue, TParameters>
+    public abstract class CacheableValueServiceBase<TValue, TParameters>
         where TValue : class
         where TParameters : class
     {
