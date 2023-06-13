@@ -67,7 +67,7 @@ namespace Sweaj.Patterns.Cache
                 case ValueRetrievalMethod.UpdateCacheOnly:
                     return await UpdateCacheOnly<TValue>(cacheRequest, cancellationToken);
                 default:
-                    throw new ApplicationException("Impossible case");
+                    throw new InvalidCacheQueryException();
 
             }
         }
