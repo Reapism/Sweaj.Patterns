@@ -2,14 +2,14 @@
 
 namespace Sweaj.Patterns.Converters
 {
-    public interface IAsyncConverter<TValue, TReturn>
-    {
-        Task<TReturn> ConvertAsync(TValue value, CancellationToken cancellationToken = default);
-    }
-
+    /// <summary>
+    /// An object that safely encapsulates whether 
+    /// the conversion succeeded or failed.
+    /// </summary>
+    /// <typeparam name="TResult"></typeparam>
     public class ConversionResult<TResult> : IValueProvider<TResult>
     {
-        private ConversionResult(TResult result, bool isSuccessful, string errorMessage = "")
+        private ConversionResult(TResult? result, bool isSuccessful, string errorMessage = "")
         {
             IsSuccessful = isSuccessful;
             Value = isSuccessful ? Guard.Against.Null(result) : default;
