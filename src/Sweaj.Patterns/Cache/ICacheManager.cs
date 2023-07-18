@@ -1,27 +1,14 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using Sweaj.Patterns.Serialization.Json;
 using System.Text;
 using System.Text.Json;
 
 namespace Sweaj.Patterns.Cache
 {
-
     public abstract class CacheManagerBase
     {
         public abstract Task ProcessAsync<TValue>(CacheRequest cacheRequest, CancellationToken cancellationToken = default);
         public abstract Task<CacheStore<TValue>> ProcessWithValueAsync<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default);
-    }
-
-    public sealed class MemoryCacheManager : CacheManagerBase
-    {
-        public override Task ProcessAsync<TValue>(CacheRequest cacheRequest, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Task<CacheStore<TValue>> ProcessWithValueAsync<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public sealed class DistributedCacheManager : CacheManagerBase
@@ -29,10 +16,12 @@ namespace Sweaj.Patterns.Cache
         private static readonly string InvalidValueRetrievalMethodInTransformingTheCacheRequest = $"The following {nameof(ValueRetrievalMethod)} is not supported.";
 
         private readonly IDistributedCache distributedCache;
+        private readonly IJsonSerializer jsonSerializer;
 
-        public DistributedCacheManager(IDistributedCache distributedCache)
+        public DistributedCacheManager(IDistributedCache distributedCache, IJsonSerializer jsonSerializer)
         {
             this.distributedCache = distributedCache;
+            this.jsonSerializer = jsonSerializer;
         }
 
         public override async Task ProcessAsync<TValue>([NotNull] CacheRequest cacheRequest, CancellationToken cancellationToken = default)
@@ -53,6 +42,9 @@ namespace Sweaj.Patterns.Cache
         public override async Task<CacheStore<TValue>> ProcessWithValueAsync<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
         {
             Guard.Against.Null(cacheRequest, nameof(cacheRequest));
+
+            // TODO refactor these methods below to not use a CacheRequest in the params and instead only use what is needed from
+            // cacherequest in the params to avoid the Severity	Code CS8604  Possible null reference argument for parameter ''
 
             switch (cacheRequest.ValueRetrievalMethod)
             {
@@ -75,32 +67,56 @@ namespace Sweaj.Patterns.Cache
         private async Task<CacheStore<TValue>> GetFromCacheOnly<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
         {
             var bytes = await distributedCache.GetAsync(cacheRequest.CacheKey, cancellationToken);
-            return CacheStore<TValue>.FromCache(cacheRequest);
+            if (bytes is null)
+                return CacheStore<TValue>.Empty();
+
+            var json = Encoding.UTF8.GetString(bytes);
+            var deserializedValue = jsonSerializer.Deserialize<TValue>(json);
+
+            if (deserializedValue is null)
+                return CacheStore<TValue>.Empty();
+
+            return CacheStore<TValue>.FromCache(cacheRequest, deserializedValue);
         }
 
         private async Task<CacheStore<TValue>> GetFromCacheOrFactory<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
         {
             var bytes = await distributedCache.GetAsync(cacheRequest.CacheKey, cancellationToken);
-            return CacheStore<TValue>.FromCache(cacheRequest);
+            if (bytes is null)
+                return CacheStore<TValue>.Empty();
+
+            var json = Encoding.UTF8.GetString(bytes);
+            var deserializedValue = jsonSerializer.Deserialize<TValue>(json);
+
+            if (deserializedValue is not null)
+                return CacheStore<TValue>.FromCache(cacheRequest, deserializedValue);
+
+            // Get value from factory.
+            var valueFromFactory = await cacheRequest.ValueFactory();
+
+            if (valueFromFactory is null)
+                return CacheStore<TValue>.Empty();
+
+            return CacheStore<TValue>.FromCache(cacheRequest, valueFromFactory);
         }
 
         private async Task<CacheStore<TValue>> SetCacheOnly<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
         {
             await SetCacheOnlyInternal(cacheRequest.CacheKey, cacheRequest.Value, FromCacheDurationOptions(cacheRequest.CacheDurationOptions), cancellationToken);
 
-            return CacheStore<TValue>.FromCache(cacheRequest);
+            return CacheStore<TValue>.FromCache(cacheRequest, cacheRequest.Value);
         }
 
         private async Task<CacheStore<TValue>> SetCacheOrCreateFactoryThenSetCache<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
         {
             // Get value provided or attempt to use create factory to get the value
-            var value = (cacheRequest.Value is not null) 
-                ? cacheRequest.Value 
-                : (cacheRequest.ValueFactory is not null) 
-                    ? cacheRequest.ValueFactory().Result 
-                    : default(TValue);
-            
-            // if value is still null, create factory returned null.
+            var value = (cacheRequest.Value is not null)
+                ? cacheRequest.Value
+                : (cacheRequest.ValueFactory is not null)
+                    ? await cacheRequest.ValueFactory()
+                    : default;
+
+            // If value is null, we are empty in all cases.
             if (value is null)
             {
                 return CacheStore<TValue>.FromRequestEmptyValue(cacheRequest);
@@ -108,10 +124,10 @@ namespace Sweaj.Patterns.Cache
 
             await SetCacheOnlyInternal(cacheRequest.CacheKey, value, FromCacheDurationOptions(cacheRequest.CacheDurationOptions), cancellationToken);
 
-            return CacheStore<TValue>.FromCache(cacheRequest);
+            return CacheStore<TValue>.FromCache(cacheRequest, value);
         }
 
-        private async Task SetCacheOnlyInternal<TValue>(CacheKey cacheKey, TValue? value, DistributedCacheEntryOptions distributedCacheEntryOptions, CancellationToken cancellationToken)
+        private async Task SetCacheOnlyInternal<TValue>(CacheKey cacheKey, TValue value, DistributedCacheEntryOptions distributedCacheEntryOptions, CancellationToken cancellationToken)
         {
             var json = JsonSerializer.Serialize(value);
             var valueInBytes = Encoding.UTF8.GetBytes(json);
@@ -124,7 +140,7 @@ namespace Sweaj.Patterns.Cache
             await distributedCache.RemoveAsync(cacheRequest.CacheKey, cancellationToken);
             await SetCacheOnlyInternal<TValue>(cacheRequest.CacheKey, cacheRequest.Value, FromCacheDurationOptions(cacheRequest.CacheDurationOptions), cancellationToken);
 
-            return CacheStore<TValue>.FromCache(cacheRequest);
+            return CacheStore<TValue>.FromCache(cacheRequest, cacheRequest.Value);
 
         }
 
@@ -147,7 +163,7 @@ namespace Sweaj.Patterns.Cache
         {
             return new DistributedCacheEntryOptions()
             {
-                AbsoluteExpiration = cacheDurationOptions.AbsoluteExpiration, 
+                AbsoluteExpiration = cacheDurationOptions.AbsoluteExpiration,
                 AbsoluteExpirationRelativeToNow = cacheDurationOptions.AbsoluteExpirationRelativeToNow,
                 SlidingExpiration = cacheDurationOptions.SlidingExpiration
             };
