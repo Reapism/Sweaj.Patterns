@@ -1,10 +1,8 @@
 ﻿using Sweaj.Patterns.NullObject;
-using System.Globalization;
 
 namespace Sweaj.Patterns.Requests
 {
     public class Request<T> : IEmpty
-        where T : new()
     {
         private Request(T? value, DateTimeOffset requestTime)
         {
@@ -19,7 +17,7 @@ namespace Sweaj.Patterns.Requests
             return Value is null;
         }
 
-        public static Request<T> Create([NotNull, ValidatedNotNull]T value)
+        public static Request<T> Create([NotNull, ValidatedNotNull] T value)
         {
 
             return new Request<T>(Guard.Against.Null(value), DateTimeOffset.UtcNow);
