@@ -1,5 +1,4 @@
 ﻿using Sweaj.Patterns.Data;
-using Sweaj.Patterns.Data.Entities;
 using Sweaj.Patterns.Data.Services;
 using Sweaj.Patterns.NullObject;
 
