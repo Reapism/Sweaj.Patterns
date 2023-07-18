@@ -2,7 +2,7 @@
 {
     public sealed class HeartbeatSynthesizer
     {
-        private HeartbeatSynthesizer(HeartbeatStatus heartbeatStatus) 
+        private HeartbeatSynthesizer(HeartbeatStatus heartbeatStatus)
         {
             RequestId = Guid.NewGuid();
             Status = heartbeatStatus;

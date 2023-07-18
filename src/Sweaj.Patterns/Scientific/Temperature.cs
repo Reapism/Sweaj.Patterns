@@ -1,11 +1,10 @@
-﻿using System.ComponentModel;
-using Sweaj.Patterns.Converters;
+﻿using Sweaj.Patterns.Converters;
 
 namespace Sweaj.Patterns.Scientific
 {
-    public sealed class Temperature : 
+    public sealed class Temperature :
         IMeasurement<double, TemperatureUnit>,
-        IConverter<TemperatureUnit, Temperature>, 
+        IConverter<TemperatureUnit, Temperature>,
         IEquatable<Temperature>
     {
         private const double AbsoluteZeroInCelsius = -273;

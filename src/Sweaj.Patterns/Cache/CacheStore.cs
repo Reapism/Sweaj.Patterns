@@ -4,7 +4,7 @@ using Sweaj.Patterns.NullObject;
 
 namespace Sweaj.Patterns.Cache
 {
-    public sealed class CacheStore<T> : IEmpty
+    public sealed class CacheStore<T> : IEmpty, IValueProvider<T>
     {
         private CacheStore(CacheRequest cacheRequest, ValueResultStatus status, T value)
         {
@@ -63,9 +63,9 @@ namespace Sweaj.Patterns.Cache
         /// <param name="value"></param>
         /// <param name="cacheRequest"></param>
         /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.FromCache"/> status.</returns>
-        public static CacheStore<T> FromCache(CacheRequest<T> cacheRequest)
+        public static CacheStore<T> FromCache(CacheRequest<T> cacheRequest, T value)
         {
-            return new CacheStore<T>(cacheRequest, ValueResultStatus.Cache, cacheRequest.Value);
+            return new CacheStore<T>(cacheRequest, ValueResultStatus.Cache, value);
         }
 
         /// <summary>
@@ -73,9 +73,9 @@ namespace Sweaj.Patterns.Cache
         /// </summary>
         /// <param name="cacheRequest"></param>
         /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.DataStore"/> status.</returns>
-        public static CacheStore<T> FromDataStore(CacheRequest<T> cacheRequest)
+        public static CacheStore<T> FromDataStore(CacheRequest<T> cacheRequest, T value)
         {
-            return new CacheStore<T>(cacheRequest, ValueResultStatus.DataStore, cacheRequest.Value);
+            return new CacheStore<T>(cacheRequest, ValueResultStatus.DataStore, value);
         }
 
         /// <summary>
@@ -84,9 +84,9 @@ namespace Sweaj.Patterns.Cache
         /// </summary>
         /// <param name="cacheRequest"></param>
         /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.Undefined"/> status.</returns>
-        public static CacheStore<T> FromThirdParty(CacheRequest<T> cacheRequest)
+        public static CacheStore<T> FromThirdParty(CacheRequest<T> cacheRequest, T value)
         {
-            return new CacheStore<T>(cacheRequest, ValueResultStatus.ThirdParty, cacheRequest.Value);
+            return new CacheStore<T>(cacheRequest, ValueResultStatus.ThirdParty, value);
         }
 
         public ValueStore<T> AsValueStore()

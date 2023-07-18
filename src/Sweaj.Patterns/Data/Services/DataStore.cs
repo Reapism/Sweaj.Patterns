@@ -94,5 +94,10 @@ namespace Sweaj.Patterns.Data.Services
         public bool HasValue => Value is not null;
         public DataRetrievalStatus Status { get; }
         TimeSpan Duration { get; }
+
+        public ValueStore<TEntity> AsValueStore()
+        {
+            return ValueStore<TEntity>.FromDataStore(this);
+        }
     }
 }

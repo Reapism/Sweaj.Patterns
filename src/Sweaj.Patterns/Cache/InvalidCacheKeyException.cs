@@ -9,15 +9,11 @@ namespace Sweaj.Patterns.Cache
     {
         public static readonly string DefaultInvalidCacheKeyMessageFormat = "The cache key [{0}] does not match the expected format {1}";
         public InvalidCacheKeyException(CacheKey cacheKey, string cacheKeyFormat)
-            : base($"The cachekey [{cacheKey}] is not in the expected cache key format [{cacheKeyFormat}]")
+            : base(string.Format(DefaultInvalidCacheKeyMessageFormat, cacheKey, cacheKeyFormat))
         { }
-    }
 
-    public sealed class InvalidCacheQueryException : PatternsException 
-    {
-        public static readonly string DefaultInvalidCacheQueryMessageFormat = "The cache key [{0}] does not match the expected format {1}";
-        public InvalidCacheQueryException(ValueRetrievalMethod valueRetrievalMethod)
-            : base($"The {nameof(ValueRetrievalMethod)} value [{valueRetrievalMethod}] is not supported.")
+        public InvalidCacheKeyException(string cacheKey, string cacheKeyFormat)
+            : base(string.Format(DefaultInvalidCacheKeyMessageFormat, cacheKey, cacheKeyFormat))
         { }
     }
 

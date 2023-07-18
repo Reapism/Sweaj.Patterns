@@ -127,7 +127,7 @@ namespace Sweaj.Patterns.Responses
             return new ApiResponse<T>(message, 202, result);
         }
 
-        public static ApiResponse<T> BadRequest( string message = nameof(BadRequest), T result = default)
+        public static ApiResponse<T> BadRequest(string message = nameof(BadRequest), T result = default)
         {
             return new ApiResponse<T>(message, 400, result);
         }

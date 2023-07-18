@@ -1,5 +1,4 @@
 ﻿using Sweaj.Patterns.Data.Entities;
-using Sweaj.Patterns.Data.Services;
 
 namespace Sweaj.Patterns.Data
 {

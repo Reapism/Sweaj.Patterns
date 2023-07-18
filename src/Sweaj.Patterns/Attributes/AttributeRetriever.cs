@@ -12,7 +12,7 @@ namespace Sweaj.Patterns.Attributes
         /// <param name="assembliesToSearch">An array of assemblies.</param>
         /// <param name="predicate">The predicate to filter by. If null, gets all attributes.</param>
         /// <returns></returns>
-        public static IList<TAttribute> FilterBy<TAttribute>(Assembly[] assembliesToSearch, [CanBeNull]Func<TAttribute, bool>? predicate)
+        public static IList<TAttribute> FilterBy<TAttribute>(Assembly[] assembliesToSearch, [CanBeNull] Func<TAttribute, bool>? predicate)
             where TAttribute : Attribute
         {
             var allAttributes = new List<TAttribute>();

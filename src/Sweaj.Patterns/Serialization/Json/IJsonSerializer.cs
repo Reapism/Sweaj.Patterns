@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace Sweaj.Patterns.Serialization.Json
+﻿namespace Sweaj.Patterns.Serialization.Json
 {
     public interface IJsonSerializer
     {

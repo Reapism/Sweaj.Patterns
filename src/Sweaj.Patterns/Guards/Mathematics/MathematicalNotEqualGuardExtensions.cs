@@ -1,8 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Ardalis.GuardClauses;
-using Sweaj.Patterns.NullObject;
-
-namespace Sweaj.Patterns.Guards.Mathematics
+﻿namespace Sweaj.Patterns.Guards.Mathematics
 {
 
     public sealed class NotEqualsException<TEqualsType> : Exception
@@ -49,6 +45,6 @@ namespace Sweaj.Patterns.Guards.Mathematics
             {
                 throw;
             }
-        }     
+        }
     }
 }

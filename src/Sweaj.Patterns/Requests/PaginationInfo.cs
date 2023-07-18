@@ -9,10 +9,39 @@
             RowsPerPage = rowsPerPage;
             TotalRowCount = totalRowCount;
         }
+
         public int TotalPages { get; }
         public int PageOffset { get; }
         public long RowsPerPage { get; }
         public long TotalRowCount { get; }
+
+        /// <summary>
+        /// The next page.
+        /// </summary>
+        /// <returns>A new <see cref="PaginationInfo"/> object representing the next page, otherwise itself.</returns>
+        public PaginationInfo NextPage()
+        {
+            if (PageOffset >= TotalPages)
+            {
+                return this;
+            }
+
+            return new PaginationInfo(TotalPages, PageOffset + 1, RowsPerPage, TotalRowCount);
+        }
+
+        /// <summary>
+        /// The previous  page.
+        /// </summary>
+        /// <returns>A new <see cref="PaginationInfo"/> object representing the next page, otherwise itself.</returns>
+        public PaginationInfo PreviousPage()
+        {
+            if (PageOffset <= 1)
+            {
+                return this;
+            }
+
+            return new PaginationInfo(TotalPages, PageOffset - 1, RowsPerPage, TotalRowCount);
+        }
 
         public static PaginationInfo FromPage(int totalPages, long rowsPerPage)
         {
@@ -21,7 +50,7 @@
             return new PaginationInfo(totalPages, pageOffset, rowsPerPage, totalRowCount);
         }
 
-        
+
         public static PaginationInfo FromTotal(long rowsPerPage, long totalRowCount)
         {
             Guard.Against.NegativeOrZero(totalRowCount);
@@ -40,7 +69,7 @@
             }
 
             const int pageOffset = 0;
-            
+
             return new PaginationInfo((int)totalPages, pageOffset, rowsPerPage, totalRowCount);
         }
     }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sweaj.Patterns.Requests
+﻿namespace Sweaj.Patterns.Requests
 {
     public interface IWebRequest
     {
@@ -14,7 +8,7 @@ namespace Sweaj.Patterns.Requests
 
     public class WebRequest : IWebRequest
     {
-        private WebRequest() 
+        private WebRequest()
         {
             RequestId = Guid.NewGuid();
         }
