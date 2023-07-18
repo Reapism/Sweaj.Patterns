@@ -30,12 +30,11 @@ namespace Sweaj.Patterns.Data.Services
             return new ValueStore<TValue>(Guard.Against.Null(Guard.Against.Null(cacheStore).Value), ValueResultStatus.Cache);
         }
 
-        public static ValueStore<TValue> FromDataStore<TKey, TEntity>(IEntityToValueMapper<TEntity, TValue> mapper, DataStore<TKey, TEntity> dataStore)
+        public static ValueStore<TEntity> FromDataStore<TKey, TEntity>(DataStore<TKey, TEntity> dataStore)
             where TEntity : Entity<TKey>
             where TKey : IEquatable<TKey>, new()
         {
-            var value = mapper.Convert(dataStore.Value);
-            return new ValueStore<TValue>(value, ValueResultStatus.DataStore);
+            return new ValueStore<TEntity>(dataStore.Value, ValueResultStatus.DataStore);
         }
 
         public static ValueStore<TValue> FromDataStore<TEntity>(IEntityToValueMapper<TEntity, TValue> mapper, DataStore<Guid, TEntity> dataStore)
