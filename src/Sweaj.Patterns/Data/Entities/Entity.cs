@@ -29,7 +29,7 @@ namespace Sweaj.Patterns.Data.Entities
         public TKey Id { get; protected set; } = new();
 
         public List<DomainEvent> Events { get; } = new();
-        
+
         public virtual bool IsEmpty() => Id.Equals(Empty().Id);
 
         public virtual Entity<TKey> Empty() => new();

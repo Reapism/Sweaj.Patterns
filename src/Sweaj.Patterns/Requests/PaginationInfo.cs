@@ -21,7 +21,7 @@
         /// <returns>A new <see cref="PaginationInfo"/> object representing the next page, otherwise itself.</returns>
         public PaginationInfo NextPage()
         {
-            if (PageOffset >= TotalPages) 
+            if (PageOffset >= TotalPages)
             {
                 return this;
             }
@@ -50,7 +50,7 @@
             return new PaginationInfo(totalPages, pageOffset, rowsPerPage, totalRowCount);
         }
 
-        
+
         public static PaginationInfo FromTotal(long rowsPerPage, long totalRowCount)
         {
             Guard.Against.NegativeOrZero(totalRowCount);
@@ -69,7 +69,7 @@
             }
 
             const int pageOffset = 0;
-            
+
             return new PaginationInfo((int)totalPages, pageOffset, rowsPerPage, totalRowCount);
         }
     }

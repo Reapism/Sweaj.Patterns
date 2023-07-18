@@ -36,7 +36,7 @@ namespace Sweaj.Patterns.Converters
         /// </summary>
         /// <param name="result">The conversion result value.</param>
         /// <returns></returns>
-        public static ConversionResult<TResult> FromSuccessful([NotNull, ValidatedNotNull]TResult result)
+        public static ConversionResult<TResult> FromSuccessful([NotNull, ValidatedNotNull] TResult result)
         {
             return new ConversionResult<TResult>(Guard.Against.Null(result, nameof(result)), true);
         }

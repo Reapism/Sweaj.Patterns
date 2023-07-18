@@ -10,7 +10,7 @@
         }
 
         public DateTimeOffset GetCurrentUtcTime()
-        { 
+        {
             return mockedDateTimeOffset;
         }
     }

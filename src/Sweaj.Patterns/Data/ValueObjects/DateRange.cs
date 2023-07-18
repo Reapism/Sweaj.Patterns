@@ -1,6 +1,5 @@
 ﻿namespace Sweaj.Patterns.Data.ValueObjects
 {
-
     public sealed class DateRange
     {
         public DateTime Start { get; }

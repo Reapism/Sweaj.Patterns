@@ -35,7 +35,7 @@
         /// within the request.
         /// </summary>
         UpdateCacheOnly = 5,
-        
+
         /// <summary>
         /// <see cref="RefreshCacheOnly"/> will refresh the cache duration for an existing cache if it exists, otherwise nothing.
         /// </summary>

@@ -1,5 +1,4 @@
 ﻿using Sweaj.Patterns.Data.Services;
-using System.Net.Cache;
 
 namespace Sweaj.Patterns.Cache
 {
@@ -31,7 +30,7 @@ namespace Sweaj.Patterns.Cache
             Guard.Against.NullOrInvalidInput(segments, nameof(segments),
                 (segments) => { return IsValidSegmentLength(segments.Length); });
 
-            return new CacheKey(separator,segments);
+            return new CacheKey(separator, segments);
         }
 
         private static bool IsValidSegmentLength(int length)
