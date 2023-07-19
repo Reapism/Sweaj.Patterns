@@ -1,6 +1,6 @@
 ﻿namespace Sweaj.Patterns.Dates
 {
-    public class MockedTimeProvider : ITimeProvider
+    public class MockedTimeProvider : IDateTimeProvider
     {
         private readonly DateTimeOffset mockedDateTimeOffset;
 
@@ -9,7 +9,7 @@
             this.mockedDateTimeOffset = mockedDateTimeOffset;
         }
 
-        public DateTimeOffset GetCurrentUtcTime()
+        public DateTimeOffset Now()
         {
             return mockedDateTimeOffset;
         }

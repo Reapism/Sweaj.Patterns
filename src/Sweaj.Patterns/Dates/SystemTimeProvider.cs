@@ -1,8 +1,8 @@
 ﻿namespace Sweaj.Patterns.Dates
 {
-    public class SystemTimeProvider : ITimeProvider
+    public class SystemTimeProvider : IDateTimeProvider
     {
-        public DateTimeOffset GetCurrentUtcTime()
+        public DateTimeOffset Now()
         {
             return DateTimeOffset.UtcNow;
         }
