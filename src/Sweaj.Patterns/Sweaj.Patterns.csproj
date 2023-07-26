@@ -4,9 +4,9 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>1.0.5</Version>
+		<Version>1.0.6-beta</Version>
 		<Title>Sweaj.Patterns</Title>
-		<Description>A software library designed for providing common useful abstractions for many types of projects I I work with often, and providing me y abstraction view over it.</Description>
+		<Description></Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>patterns, software patterns library</PackageTags>
