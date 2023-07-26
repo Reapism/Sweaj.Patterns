@@ -1,31 +1,25 @@
-﻿using Sweaj.Patterns.NullObject;
+﻿using Sweaj.Patterns.Data.Services;
+using Sweaj.Patterns.Dates;
 
 namespace Sweaj.Patterns.Requests
 {
-    public class Request<T> : IEmpty
+    public abstract class Request
     {
-        private Request(T? value, DateTimeOffset requestTime)
+        public Request(IDateTimeProvider dateTimeProvider)
         {
-            Value = value;
-            RequestTime = requestTime;
+            RequestTime = dateTimeProvider.Now();
         }
 
-        public T? Value { get; set; }
         public DateTimeOffset RequestTime { get; }
-        public bool IsEmpty()
+    }
+    public abstract class Request<T> : Request, IValueProvider<T>
+    {
+        protected Request([NotNull, ValidatedNotNull] T value, IDateTimeProvider dateTimeProvider)
+            : base(dateTimeProvider)
         {
-            return Value is null;
+            Value = Guard.Against.Null(value);
         }
 
-        public static Request<T> Create([NotNull, ValidatedNotNull] T value)
-        {
-
-            return new Request<T>(Guard.Against.Null(value), DateTimeOffset.UtcNow);
-        }
-
-        public static Request<T> Empty()
-        {
-            return new Request<T>(default, DateTimeOffset.UtcNow);
-        }
+        public T Value { get; set; }
     }
 }
