@@ -4,15 +4,11 @@ using Sweaj.Patterns.NullObject;
 namespace Sweaj.Patterns.Data.Entities
 {
     /// <summary>
-    /// A base entity with a <see cref="Guid"/> type identifier and support for holding
+    /// A base entity with a <see cref="Guid"/> key type identifier and support for holding
     /// events.
     /// </summary>
     public abstract class Entity : Entity<Guid>
     {
-        public override Entity<Guid> Empty()
-        {
-            return base.Empty();
-        }
         public override bool IsEmpty()
         {
             return Guid.Empty.Equals(Id);
@@ -23,18 +19,19 @@ namespace Sweaj.Patterns.Data.Entities
     /// A base entity with generic type identifier and support for holding
     /// events, and uses a generic key type.
     /// </summary>
-    public class Entity<TKey> : IDomainEventProvider, IEmpty
+    public abstract class Entity<TKey> : IEmpty
         where TKey : IEquatable<TKey>, new()
     {
-        public TKey Id { get; protected set; } = new();
+        public TKey Id { get; protected set; } = new TKey();
 
-        public List<DomainEvent> Events { get; } = new();
+        public List<DomainEvent> Events = new();
 
-        public virtual bool IsEmpty() => Id.Equals(Empty().Id);
-
-        public virtual Entity<TKey> Empty() => new();
+        public virtual bool IsEmpty() => Id.Equals(default);
     }
 
+    /// <summary>
+    /// Represents a polymorphic entity with a default key type of <see cref="Guid"/>.
+    /// </summary>
     public abstract class PolymorphicEntity : PolymorphicEntity<Guid>
     { }
 

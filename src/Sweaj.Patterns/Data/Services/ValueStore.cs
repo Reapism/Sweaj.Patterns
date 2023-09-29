@@ -5,7 +5,7 @@ using Sweaj.Patterns.NullObject;
 
 namespace Sweaj.Patterns.Data.Services
 {
-    public sealed class ValueStore<TValue> : IEmpty
+    public sealed class ValueStore<TValue> : IValueProvider<TValue>, IEmpty
     {
         public TValue Value { get; }
         public ValueResultStatus ValueResultStatus { get; }
