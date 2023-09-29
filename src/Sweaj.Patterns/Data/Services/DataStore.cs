@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace Sweaj.Patterns.Data.Services
 {
-    public class DataStore<TKey, TEntity>
+    public class DataStore<TKey, TEntity> : IValueProvider<TEntity>
         where TKey : IEquatable<TKey>, new()
         where TEntity : Entity<TKey>
     {

@@ -8,16 +8,16 @@ namespace Sweaj.Patterns.Cache
     {
         private CacheStore(CacheRequest cacheRequest, ValueResultStatus status, T value)
         {
-            CacheRequest = cacheRequest;
-
             Value = Guard.Against.Null<T>(value, nameof(value));
+            CacheRequest = cacheRequest;
+            Status = status;
         }
 
         private CacheStore(CacheRequest<T> cacheRequest, ValueResultStatus status, T value)
         {
-            CacheRequest = CacheRequest.From(cacheRequest);
-
             Value = Guard.Against.Null<T>(value, nameof(value));
+            CacheRequest = CacheRequest.From(cacheRequest);
+            Status = status;
         }
 
         public T Value { get; }
