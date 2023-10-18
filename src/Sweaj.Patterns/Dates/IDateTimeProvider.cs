@@ -4,6 +4,5 @@
     internal interface IDateTimeProvider
     {
         DateTimeOffset Now();
-        DateTimeOffset ExactNow();
     }
 }

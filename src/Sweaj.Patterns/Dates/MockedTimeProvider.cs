@@ -9,14 +9,9 @@
             this.mockedDateTimeOffset = mockedDateTimeOffset;
         }
 
-        public DateTimeOffset ExactNow()
-        {
-            throw new NotImplementedException();
-        }
-
         public DateTimeOffset Now()
         {
-            return mockedDateTimeOffset;
+            return this.mockedDateTimeOffset;
         }
     }
 }
