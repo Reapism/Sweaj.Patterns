@@ -4,11 +4,11 @@ namespace Sweaj.Patterns.Data.ValueObjects
 {
     public sealed partial class Email
     {
-        private readonly string _email;
+        private readonly string emailAddress;
 
         private Email(string email)
         {
-            _email = email;
+            this.emailAddress = email;
         }
 
         public static Email Create(string email)
@@ -34,7 +34,7 @@ namespace Sweaj.Patterns.Data.ValueObjects
 
         public static implicit operator string(Email email)
         {
-            return email._email;
+            return email.emailAddress;
         }
 
         public static explicit operator Email(string email)
@@ -44,7 +44,7 @@ namespace Sweaj.Patterns.Data.ValueObjects
 
         public override string ToString()
         {
-            return _email;
+            return this.emailAddress;
         }
 
         public override bool Equals(object obj)
@@ -52,7 +52,7 @@ namespace Sweaj.Patterns.Data.ValueObjects
             try
             {
                 var addr = (Email)obj;
-                return addr._email == _email;
+                return addr.emailAddress == this.emailAddress;
             }
             catch
             {
@@ -62,7 +62,7 @@ namespace Sweaj.Patterns.Data.ValueObjects
 
         public override int GetHashCode()
         {
-            return _email.GetHashCode();
+            return this.emailAddress.GetHashCode();
         }
 
         [GeneratedRegex("^([\\w\\.\\-]+)@([\\w\\-]+)((\\.(\\w){2,3})+)$")]

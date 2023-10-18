@@ -21,9 +21,13 @@
             return new DateRange(start, end);
         }
 
-        public static DateRange Create(DateTime start, TimeSpan duration)
+        public static DateRange Create(DateTime start, TimeSpan dur)
         {
-            var end = start.Add(duration);
+            var end = start.Add(
+                Guard.Against.AgainstExpression
+                (
+                    (dur) => TimeSpan.Zero == dur, dur, "Duration must be positive.")
+                );
             return Create(start, end);
         }
 
