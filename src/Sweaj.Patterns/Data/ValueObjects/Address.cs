@@ -2,35 +2,41 @@
 
 namespace Sweaj.Patterns.Data.ValueObjects
 {
+    public enum AddressFormat
+    {
+        Short,
+        Long
+    }
+
     public sealed partial class Address
     {
-        private readonly string _street;
-        private readonly string _city;
-        private readonly string _state;
-        private readonly string _zip;
-        private readonly string _country;
+        private readonly string street;
+        private readonly string city;
+        private readonly string state;
+        private readonly string zip;
+        private readonly string country;
 
-        public string Street => _street;
-        public string City => _city;
-        public string State => _state;
-        public string Zip => _zip;
-        public string Country => _country;
+        public string Street => this.street;
+        public string City => this.city;
+        public string State => this.state;
+        public string Zip => this.zip;
+        public string Country => this.country;
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
         private Address(string street, string city, string state, string zip, string country)
         {
-            _street = street;
-            _city = city;
-            _state = state;
-            _zip = zip;
-            _country = country;
+            this.street = street;
+            this.city = city;
+            this.state = state;
+            this.zip = zip;
+            this.country = country;
         }
 
         public static Address Create(string street, string city, string state, string zip, string country)
         {
             //validate the address format using regular expressions
-            if (!Regex.IsMatch(Guard.Against.NullOrWhiteSpace(zip), @"^\d{5}(?:[-\s]\d{4})?$"))
+            if (!ZipCodeRegex().IsMatch(Guard.Against.NullOrWhiteSpace(zip)))
             {
                 throw new ArgumentException("Invalid Zip code format");
             }
@@ -62,16 +68,16 @@ namespace Sweaj.Patterns.Data.ValueObjects
                 return false;
             }
 
-            return _street == address._street &&
-                   _city == address._city &&
-                   _state == address._state &&
-                   _zip == address._zip &&
-                   _country == address._country;
+            return this.street == address.street &&
+                   this.city == address.city &&
+                   this.state == address.state &&
+                   this.zip == address.zip &&
+                   this.country == address.country;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(_street, _city, _state, _zip, _country);
+            return HashCode.Combine(this.street, this.city, this.state, this.zip, this.country);
         }
 
         public override string ToString()
@@ -86,7 +92,7 @@ namespace Sweaj.Patterns.Data.ValueObjects
 
         private string GetFormattedAddress()
         {
-            return $"{_street}, {_city}, {_state}, {_zip}, {_country}";
+            return $"{this.street}, {this.city}, {this.state}, {this.zip}, {this.country}";
         }
 
         private string GetFormattedAddress(AddressFormat format)
@@ -94,9 +100,9 @@ namespace Sweaj.Patterns.Data.ValueObjects
             switch (format)
             {
                 case AddressFormat.Short:
-                    return $"{_city}, {_state}";
+                    return $"{this.city}, {this.state}";
                 case AddressFormat.Long:
-                    return $"{_street}, {_city}, {_state}, {_zip}, {_country}";
+                    return $"{this.street}, {this.city}, {this.state}, {this.zip}, {this.country}";
                 default:
                     return GetFormattedAddress();
             }
@@ -104,5 +110,7 @@ namespace Sweaj.Patterns.Data.ValueObjects
 
         [GeneratedRegex("^\\d{5}-\\d{4}|\\d{5}|[A-Z]\\d[A-Z] \\d[A-Z]\\d$")]
         private static partial Regex PostalCodeValidationRegex();
+        [GeneratedRegex("^\\d{5}(?:[-\\s]\\d{4})?$")]
+        private static partial Regex ZipCodeRegex();
     }
 }
