@@ -11,6 +11,7 @@ namespace Sweaj.Patterns.Response
     public interface IResult<TKey, TResult> : IResult<TKey>, IValueProvider<TResult>
         where TKey : IEquatable<TKey>
     {
+
     }
     public class Result<TKey, TValue> : IResult<TKey, TValue>
         where TKey : IEquatable<TKey>, new()
@@ -20,6 +21,7 @@ namespace Sweaj.Patterns.Response
         /// </summary>
         public Result([NotNull] IValueProvider<TValue> value) : this(new(), value)
         {
+
         }
         public Result(TKey resultId, [NotNull] IValueProvider<TValue> value)
         {
@@ -28,6 +30,8 @@ namespace Sweaj.Patterns.Response
         }
 
         public TKey ResultId { get; }
+
+        public DateOnly DateOnly { get; }
 
         public TValue Value { get; }
     }

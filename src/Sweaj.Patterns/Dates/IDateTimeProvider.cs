@@ -1,7 +1,9 @@
-﻿namespace Sweaj.Patterns.Dates
+﻿using Sweaj.Patterns.Attributes;
+
+namespace Sweaj.Patterns.Dates
 {
-    
-    internal interface IDateTimeProvider
+    [ImplementationStats]
+    public interface IDateTimeProvider
     {
         DateTimeOffset Now();
     }
