@@ -21,14 +21,18 @@
 
 	<ItemGroup>
 	  <Compile Remove="AI\Pipelines\**" />
+	  <Compile Remove="Clients\**" />
+	  <Compile Remove="Initializer\**" />
 	  <EmbeddedResource Remove="AI\Pipelines\**" />
+	  <EmbeddedResource Remove="Clients\**" />
+	  <EmbeddedResource Remove="Initializer\**" />
 	  <None Remove="AI\Pipelines\**" />
+	  <None Remove="Clients\**" />
+	  <None Remove="Initializer\**" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Clients\" />
 		<Folder Include="Graphs\" />
-		<Folder Include="Initializer\" />
 		<Folder Include="Economics\" />
 		<Folder Include="Options\Validations\" />
 		<Folder Include="Ui\" />

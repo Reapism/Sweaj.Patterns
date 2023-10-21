@@ -29,9 +29,9 @@ namespace Sweaj.Patterns.Data.Entities
         public virtual bool IsEmpty() => Id.Equals(default);
     }
 
-    /// <summary>
-    /// Represents a polymorphic entity with a default key type of <see cref="Guid"/>.
-    /// </summary>
+/// <summary>
+/// Represents a polymorphic entity with a default key type of <see cref="Guid"/>.
+/// </summary>
     public abstract class PolymorphicEntity : PolymorphicEntity<Guid>
     { }
 
