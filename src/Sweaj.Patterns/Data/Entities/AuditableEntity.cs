@@ -17,12 +17,15 @@
 
         public void Audit(string modifyingUser)
         {
-            LastModifiedDate = DateTimeOffset.Now;
+            LastModifiedDate = DateTimeOffset.UtcNow;
+            LastModifiedByUser = modifyingUser;
         }
 
-        public void AuditNewUserModified(string modifyingUser)
+        public void AuditNewUserModified(string createdByUser)
         {
-
+            CreatedByUser = createdByUser;
+            CreatedDate = DateTimeOffset.UtcNow;
+            Audit(createdByUser);
         }
     }
 }
