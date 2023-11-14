@@ -4,6 +4,7 @@ namespace Sweaj.Patterns.Cache
 {
     public sealed class CacheKey : IEquatable<CacheKey>, IComparable<CacheKey>, IValueProvider<string>
     {
+        private const int MinSegmentLength = 3;
         private readonly string separator;
         private readonly string[] segments;
 
@@ -24,7 +25,6 @@ namespace Sweaj.Patterns.Cache
             return cacheKey.Value;
         }
 
-        // Should create guard against cache key lengths being less than two segments?
         public static CacheKey Create(string separator, params string[] segments)
         {
             Guard.Against.NullOrInvalidInput(segments, nameof(segments),
@@ -35,25 +35,7 @@ namespace Sweaj.Patterns.Cache
 
         private static bool IsValidSegmentLength(int length)
         {
-            return length < 3;
-        }
-
-        public static bool TryDeconstruct(string cacheKeyValue, string separator, out CacheKey cacheKey)
-        {
-            try
-            {
-                var segments = cacheKeyValue.Split(separator);
-                if (!IsValidSegmentLength(segments.Length))
-                    throw new InvalidCacheKeyException(cacheKeyValue, $"Example{separator}Example");
-
-                cacheKey = new CacheKey(separator, segments);
-                return true;
-            }
-            catch
-            {
-                cacheKey = default;
-                return false;
-            }
+            return length < MinSegmentLength;
         }
 
         public override bool Equals(object? obj)
