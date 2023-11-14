@@ -2,26 +2,34 @@
 
 namespace Sweaj.Patterns.Serialization.Json
 {
-    public sealed class JsonSerializerAdapter : IJsonSerializer
+    public sealed class JsonSerializerAdapter<T> : IJsonSerializer<T>
     {
-        public T Deserialize<T>(string json)
+        public T Deserialize(string serializedValue)
         {
-            return JsonSerializer.Deserialize<T>(json, JsonSerializerOptionsProvider.Web);
+            var instance = JsonSerializer.Deserialize<T>(serializedValue);
+
+#pragma warning disable CS8603 // Possible null reference return.
+            return Guard.Against.Null(instance);
+#pragma warning restore CS8603 // Possible null reference return.
+        }     
+
+        public ValueTask<T> DeserializeAsync(Stream value)
+        {
+
+            return JsonSerializer.DeserializeAsync<T>(value, JsonSerializerOptionsProvider.Web);
         }
 
-        public async Task<T> DeserializeAsync<T>(Stream stream, CancellationToken cancellationToken = default)
+        public string Serialize(T value)
         {
-            return await JsonSerializer.DeserializeAsync<T>(stream, JsonSerializerOptionsProvider.Web, cancellationToken);
+            return JsonSerializer.Serialize(value, JsonSerializerOptionsProvider.Web);
         }
 
-        public string Serialize<T>(T instance)
+        public ValueTask<Stream> SerializeAsync(T value)
         {
-            return JsonSerializer.Serialize(instance, JsonSerializerOptionsProvider.Web);
-        }
-
-        public async Task SerializeAsync<T>(Stream stream, T instance, CancellationToken cancellationToken = default)
-        {
-            await JsonSerializer.SerializeAsync(stream, instance, JsonSerializerOptionsProvider.Web, cancellationToken);
+            sizeof(T)
+            Stream stream = new MemoryStream(sizeof(value));
+            JsonSerializer.SerializeAsync(stream, value, JsonSerializerOptionsProvider.Web);
+            return ValueTask.FromResult(stream);
         }
     }
 }
