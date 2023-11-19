@@ -4,7 +4,7 @@ namespace Sweaj.Patterns.Data
 {
     /// <summary>
     /// Provides a mechanism for retrieving a <see cref="IRepository"/>
-    /// instance to a consumer.
+    /// instance.
     /// </summary>
     public interface IRepositoryRetriever
     {
@@ -17,7 +17,7 @@ namespace Sweaj.Patterns.Data
 
     /// <summary>
     /// Provides a mechanism for retrieving a <see cref="IRepository{TEntity}"/>
-    /// instance to a consumer.
+    /// instance.
     /// </summary>
     /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
     public interface IRepositoryRetriever<TEntity>
@@ -31,8 +31,8 @@ namespace Sweaj.Patterns.Data
     }
 
     /// <summary>
-    /// Provides a mechanism for retrieving a <see cref="IRepository{TEntity}"/>
-    /// instance to a consumer.
+    /// Provides a mechanism for retrieving a <see cref="IRepository{TKey,TEntity}"/>
+    /// instance.
     /// </summary>
     /// <typeparam name="TKey ">An entity in an underlying store.</typeparam>
     /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
@@ -48,8 +48,8 @@ namespace Sweaj.Patterns.Data
     }
 
     /// <summary>
-    /// Provides a mechanism for retrieving a <see cref="IRepository{TEntity}"/>
-    /// instance to a consumer.
+    /// Provides a mechanism for retrieving a <see cref="IReadOnlyRepository"/>
+    /// instance.
     /// </summary>
     /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
     public interface IReadOnlyRepositoryRetriever
@@ -62,8 +62,8 @@ namespace Sweaj.Patterns.Data
     }
 
     /// <summary>
-    /// Provides a mechanism for retrieving a <see cref="IRepository{TEntity}"/>
-    /// instance to a consumer.
+    /// Provides a mechanism for retrieving a <see cref="IReadOnlyRepositoryRetriever{TEntity}"/>
+    /// instance.
     /// </summary>
     /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
     public interface IReadOnlyRepositoryRetriever<TEntity>
@@ -76,6 +76,12 @@ namespace Sweaj.Patterns.Data
         IReadOnlyRepository<TEntity> GetReadOnlyRepository();
     }
 
+    /// <summary>
+    /// Provides a mechanism for retrieving a <see cref="IReadOnlyRepositoryRetriever{TKey, TEntity}"/>
+    /// instance.
+    /// </summary>
+    /// <typeparam name="TKey ">An entity in an underlying store.</typeparam>
+    /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
     public interface IReadOnlyRepositoryRetriever<TKey, TEntity>
         where TKey : IEquatable<TKey>, new()
         where TEntity : Entity<TKey>, IAggregateRoot

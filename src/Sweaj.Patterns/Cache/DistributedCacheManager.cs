@@ -5,26 +5,18 @@ using System.Text.Json;
 
 namespace Sweaj.Patterns.Cache
 {
-    public abstract class CacheManagerBase
-    {
-        public abstract Task ProcessAsync<TValue>(CacheRequest cacheRequest, CancellationToken cancellationToken = default);
-        public abstract Task<CacheStore<TValue>> ProcessWithValueAsync<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default);
-    }
-
     public sealed class DistributedCacheManager : CacheManagerBase
     {
         private static readonly string InvalidValueRetrievalMethodInTransformingTheCacheRequest = $"The following {nameof(ValueRetrievalMethod)} is not supported.";
 
         private readonly IDistributedCache distributedCache;
-        private readonly IJsonSerializer jsonSerializer;
-
-        public DistributedCacheManager(IDistributedCache distributedCache, IJsonSerializer jsonSerializer)
+ 
+        public DistributedCacheManager(IDistributedCache distributedCache)
         {
             this.distributedCache = distributedCache;
-            this.jsonSerializer = jsonSerializer;
         }
 
-        public override async Task ProcessAsync<TValue>([NotNull] CacheRequest cacheRequest, CancellationToken cancellationToken = default)
+        public override async Task ProcessAsync<TValue>([NotNull] CacheReadOnlyRequest cacheRequest, CancellationToken cancellationToken = default)
         {
             switch (cacheRequest.ValueRetrievalMethod)
             {
@@ -39,7 +31,7 @@ namespace Sweaj.Patterns.Cache
             }
         }
 
-        public override async Task<CacheStore<TValue>> ProcessWithValueAsync<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
+        public override async Task<CacheStore<TValue>> ProcessWithValueAsync<TValue>(CacheValueRequest<TValue> cacheRequest, IJsonSerializer<TValue> serializer, CancellationToken cancellationToken = default)
         {
             Guard.Against.Null(cacheRequest, nameof(cacheRequest));
 
@@ -49,29 +41,29 @@ namespace Sweaj.Patterns.Cache
             switch (cacheRequest.ValueRetrievalMethod)
             {
                 case ValueRetrievalMethod.GetFromCacheOrFactory:
-                    return await GetFromCacheOnly(cacheRequest, cancellationToken);
+                    return await GetFromCacheOnly(cacheRequest, serializer, cancellationToken);
                 case ValueRetrievalMethod.GetFromCacheOnly:
-                    return await GetFromCacheOrFactory<TValue>(cacheRequest, cancellationToken);
+                    return await GetFromCacheOrFactory(cacheRequest, serializer, cancellationToken);
                 case ValueRetrievalMethod.SetCacheOnly:
-                    return await SetCacheOnly<TValue>(cacheRequest, cancellationToken);
+                    return await SetCacheOnly(cacheRequest, cancellationToken);
                 case ValueRetrievalMethod.SetCacheOrCreateFactoryThenSetCache:
-                    return await SetCacheOrCreateFactoryThenSetCache<TValue>(cacheRequest, cancellationToken);
+                    return await SetCacheOrCreateFactoryThenSetCache(cacheRequest, cancellationToken);
                 case ValueRetrievalMethod.UpdateCacheOnly:
-                    return await UpdateCacheOnly<TValue>(cacheRequest, cancellationToken);
+                    return await UpdateCacheOnly(cacheRequest, cancellationToken);
                 default:
                     throw new InvalidCacheQueryException(cacheRequest.ValueRetrievalMethod);
 
             }
         }
 
-        private async Task<CacheStore<TValue>> GetFromCacheOnly<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
+        private async Task<CacheStore<TValue>> GetFromCacheOnly<TValue>(CacheValueRequest<TValue> cacheRequest, IJsonSerializer<TValue> serializer, CancellationToken cancellationToken = default)
         {
             var bytes = await distributedCache.GetAsync(cacheRequest.CacheKey, cancellationToken);
             if (bytes is null)
                 return CacheStore<TValue>.Empty();
 
             var json = Encoding.UTF8.GetString(bytes);
-            var deserializedValue = jsonSerializer.Deserialize<TValue>(json);
+            var deserializedValue = await serializer.DeserializeAsync(json, cancellationToken);
 
             if (deserializedValue is null)
                 return CacheStore<TValue>.Empty();
@@ -79,14 +71,14 @@ namespace Sweaj.Patterns.Cache
             return CacheStore<TValue>.FromCache(cacheRequest, deserializedValue);
         }
 
-        private async Task<CacheStore<TValue>> GetFromCacheOrFactory<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
+        private async Task<CacheStore<TValue>> GetFromCacheOrFactory<TValue>(CacheValueRequest<TValue> cacheRequest, IJsonSerializer<TValue> serializer, CancellationToken cancellationToken = default)
         {
             var bytes = await distributedCache.GetAsync(cacheRequest.CacheKey, cancellationToken);
             if (bytes is null)
                 return CacheStore<TValue>.Empty();
 
             var json = Encoding.UTF8.GetString(bytes);
-            var deserializedValue = jsonSerializer.Deserialize<TValue>(json);
+            var deserializedValue = serializer.Deserialize(json);
 
             if (deserializedValue is not null)
                 return CacheStore<TValue>.FromCache(cacheRequest, deserializedValue);
@@ -100,14 +92,14 @@ namespace Sweaj.Patterns.Cache
             return CacheStore<TValue>.FromCache(cacheRequest, valueFromFactory);
         }
 
-        private async Task<CacheStore<TValue>> SetCacheOnly<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
+        private async Task<CacheStore<TValue>> SetCacheOnly<TValue>(CacheValueRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
         {
             await SetCacheOnlyInternal(cacheRequest.CacheKey, cacheRequest.Value, FromCacheDurationOptions(cacheRequest.CacheDurationOptions), cancellationToken);
 
             return CacheStore<TValue>.FromCache(cacheRequest, cacheRequest.Value);
         }
 
-        private async Task<CacheStore<TValue>> SetCacheOrCreateFactoryThenSetCache<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
+        private async Task<CacheStore<TValue>> SetCacheOrCreateFactoryThenSetCache<TValue>(CacheValueRequest<TValue> cacheRequest, CancellationToken cancellationToken = default)
         {
             // Get value provided or attempt to use create factory to get the value
             var value = (cacheRequest.Value is not null)
@@ -135,7 +127,7 @@ namespace Sweaj.Patterns.Cache
             await distributedCache.SetAsync(cacheKey, valueInBytes, distributedCacheEntryOptions, cancellationToken);
         }
 
-        private async Task<CacheStore<TValue>> UpdateCacheOnly<TValue>(CacheRequest<TValue> cacheRequest, CancellationToken cancellationToken)
+        private async Task<CacheStore<TValue>> UpdateCacheOnly<TValue>(CacheValueRequest<TValue> cacheRequest, CancellationToken cancellationToken)
         {
             await distributedCache.RemoveAsync(cacheRequest.CacheKey, cancellationToken);
             await SetCacheOnlyInternal<TValue>(cacheRequest.CacheKey, cacheRequest.Value, FromCacheDurationOptions(cacheRequest.CacheDurationOptions), cancellationToken);
@@ -144,7 +136,7 @@ namespace Sweaj.Patterns.Cache
 
         }
 
-        private async Task<CacheStore<TValue>> RefreshCacheOnly<TValue>(CacheRequest cacheRequest, CancellationToken cancellationToken)
+        private async Task<CacheStore<TValue>> RefreshCacheOnly<TValue>(CacheReadOnlyRequest cacheRequest, CancellationToken cancellationToken)
         {
             await distributedCache.RefreshAsync(cacheRequest.CacheKey, cancellationToken);
 
@@ -152,7 +144,7 @@ namespace Sweaj.Patterns.Cache
         }
 
 
-        private async Task<CacheStore<TValue>> ExpireCacheOnly<TValue>(CacheRequest cacheRequest, CancellationToken cancellationToken)
+        private async Task<CacheStore<TValue>> ExpireCacheOnly<TValue>(CacheReadOnlyRequest cacheRequest, CancellationToken cancellationToken)
         {
             await distributedCache.RemoveAsync(cacheRequest.CacheKey, cancellationToken);
 

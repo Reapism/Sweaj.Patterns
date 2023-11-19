@@ -6,22 +6,22 @@ namespace Sweaj.Patterns.Cache
 {
     public sealed class CacheStore<T> : IEmpty, IValueProvider<T>
     {
-        private CacheStore(CacheRequest cacheRequest, ValueResultStatus status, T value)
+        private CacheStore(CacheReadOnlyRequest cacheRequest, ValueResultStatus status, T value)
         {
             Value = Guard.Against.Null<T>(value, nameof(value));
             CacheRequest = cacheRequest;
             Status = status;
         }
 
-        private CacheStore(CacheRequest<T> cacheRequest, ValueResultStatus status, T value)
+        private CacheStore(CacheValueRequest<T> cacheRequest, ValueResultStatus status, T value)
         {
             Value = Guard.Against.Null<T>(value, nameof(value));
-            CacheRequest = CacheRequest.From(cacheRequest);
+            CacheRequest = CacheReadOnlyRequest.From(cacheRequest);
             Status = status;
         }
 
         public T Value { get; }
-        public CacheRequest CacheRequest { get; }
+        public CacheReadOnlyRequest CacheRequest { get; }
         public ValueResultStatus Status { get; }
         public bool IsEmpty() => ValueResultStatus.Empty == Status;
 
@@ -33,7 +33,7 @@ namespace Sweaj.Patterns.Cache
         /// <see cref="ValueResultStatus.Empty"/> status.</returns>
         public static CacheStore<T> Empty()
         {
-            return new CacheStore<T>(default(CacheRequest), ValueResultStatus.Empty, default);
+            return new CacheStore<T>(default(CacheReadOnlyRequest), ValueResultStatus.Empty, default);
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Sweaj.Patterns.Cache
         /// <typeparam name="T"></typeparam>
         /// <returns>A default value <see cref="CacheStore{T}"/> that has a 
         /// <see cref="ValueResultStatus.Empty"/> status.</returns>
-        public static CacheStore<T> FromRequestEmptyValue(CacheRequest<T> cacheRequest)
+        public static CacheStore<T> FromRequestEmptyValue(CacheValueRequest<T> cacheRequest)
         {
             return new CacheStore<T>(cacheRequest, ValueResultStatus.Empty, default);
         }
@@ -53,7 +53,7 @@ namespace Sweaj.Patterns.Cache
         /// <typeparam name="T"></typeparam>
         /// <returns>A default value <see cref="CacheStore{T}"/> that has a 
         /// <see cref="ValueResultStatus.Empty"/> status.</returns>
-        public static CacheStore<T> FromRequestEmptyValue(CacheRequest cacheRequest)
+        public static CacheStore<T> FromRequestEmptyValue(CacheReadOnlyRequest cacheRequest)
         {
             return new CacheStore<T>(cacheRequest, ValueResultStatus.Empty, default);
         }
@@ -63,7 +63,7 @@ namespace Sweaj.Patterns.Cache
         /// <param name="value"></param>
         /// <param name="cacheRequest"></param>
         /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.FromCache"/> status.</returns>
-        public static CacheStore<T> FromCache(CacheRequest<T> cacheRequest, T value)
+        public static CacheStore<T> FromCache(CacheValueRequest<T> cacheRequest, T value)
         {
             return new CacheStore<T>(cacheRequest, ValueResultStatus.Cache, value);
         }
@@ -73,7 +73,7 @@ namespace Sweaj.Patterns.Cache
         /// </summary>
         /// <param name="cacheRequest"></param>
         /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.DataStore"/> status.</returns>
-        public static CacheStore<T> FromDataStore(CacheRequest<T> cacheRequest, T value)
+        public static CacheStore<T> FromDataStore(CacheValueRequest<T> cacheRequest, T value)
         {
             return new CacheStore<T>(cacheRequest, ValueResultStatus.DataStore, value);
         }
@@ -84,7 +84,7 @@ namespace Sweaj.Patterns.Cache
         /// </summary>
         /// <param name="cacheRequest"></param>
         /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.Undefined"/> status.</returns>
-        public static CacheStore<T> FromThirdParty(CacheRequest<T> cacheRequest, T value)
+        public static CacheStore<T> FromThirdParty(CacheValueRequest<T> cacheRequest, T value)
         {
             return new CacheStore<T>(cacheRequest, ValueResultStatus.ThirdParty, value);
         }
