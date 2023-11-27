@@ -10,7 +10,7 @@ namespace Sweaj.Patterns.Converters
     /// <typeparam name="TReturn">The converted value.</typeparam>
     public interface IConverter
     {
-        ConversionResult<TReturn> Convert<TValue, TReturn>(TValue value)
+        ConversionResult<TReturn> Convert<TValue, TReturn>(TValue value);
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ namespace Sweaj.Patterns.Converters
     /// <typeparam name="TReturn">The converted value.</typeparam>
     public interface IAsyncConverter
     {
-        Task<ConversionResult<TReturn>> ConvertAsync<TValue, TReturn>(TValue value, CancellationToken cancellationToken = default)
+        Task<ConversionResult<TReturn>> ConvertAsync<TValue, TReturn>(TValue value, CancellationToken cancellationToken = default);
     }
 
     public sealed class AutoConverter
