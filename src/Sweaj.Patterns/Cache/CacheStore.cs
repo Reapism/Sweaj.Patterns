@@ -36,6 +36,16 @@ namespace Sweaj.Patterns.Cache
         }
 
         /// <summary>
+        /// Creates a new instance of <see cref="CacheStore{T}"/> that represents a value obtained from a <see cref="ValueResultStatus.DataStore"/>.
+        /// </summary>
+        /// <param name="cacheRequest"></param>
+        /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.DataStore"/> status.</returns>
+        public static CacheStore<T> From(CacheValueRequest<T> cacheRequest, T value, ValueResultStatus valueResultStatus)
+        {
+            return new CacheStore<T>(cacheRequest, valueResultStatus, value);
+        }
+
+        /// <summary>
         /// Creates a new instance of <see cref="CacheStore{T}"/> that represents a value obtained from a <see cref="ValueResultStatus.Empty"/>.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -75,17 +85,6 @@ namespace Sweaj.Patterns.Cache
         public static CacheStore<T> FromDataStore(CacheValueRequest<T> cacheRequest, T value)
         {
             return new CacheStore<T>(cacheRequest, ValueResultStatus.DataStore, value);
-        }
-
-        /// <summary>
-        /// Returns a new <see cref="CacheStore{T}"/> and specifies that this value
-        /// was unknowningly obtained via cache or datastore due to a third party request.
-        /// </summary>
-        /// <param name="cacheRequest"></param>
-        /// <returns>A <see cref="CacheStore{T}"/> that has a <see cref="ValueResultStatus.Undefined"/> status.</returns>
-        public static CacheStore<T> FromThirdParty(CacheValueRequest<T> cacheRequest, T value)
-        {
-            return new CacheStore<T>(cacheRequest, ValueResultStatus.ThirdParty, value);
         }
 
         public ValueStore<T> AsValueStore()
