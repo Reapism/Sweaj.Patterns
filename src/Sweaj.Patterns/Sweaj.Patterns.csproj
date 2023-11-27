@@ -23,23 +23,21 @@
 	  <Compile Remove="AI\Pipelines\**" />
 	  <Compile Remove="Clients\**" />
 	  <Compile Remove="Initializer\**" />
+	  <Compile Remove="Options\Validations\**" />
+	  <Compile Remove="Ui\**" />
 	  <EmbeddedResource Remove="AI\Pipelines\**" />
 	  <EmbeddedResource Remove="Clients\**" />
 	  <EmbeddedResource Remove="Initializer\**" />
+	  <EmbeddedResource Remove="Options\Validations\**" />
+	  <EmbeddedResource Remove="Ui\**" />
 	  <None Remove="AI\Pipelines\**" />
 	  <None Remove="Clients\**" />
 	  <None Remove="Initializer\**" />
+	  <None Remove="Options\Validations\**" />
+	  <None Remove="Ui\**" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Graphs\" />
-		<Folder Include="Economics\" />
-		<Folder Include="Options\Validations\" />
-		<Folder Include="Ui\" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="..\.editorconfig" Link=".editorconfig" />
 		<None Include="..\..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
