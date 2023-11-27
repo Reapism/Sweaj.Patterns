@@ -26,8 +26,7 @@ namespace Sweaj.Patterns.Serialization.Json
 
         public ValueTask<Stream> SerializeAsync(T value)
         {
-            sizeof(T)
-            Stream stream = new MemoryStream(sizeof(value));
+            Stream stream = new MemoryStream();
             JsonSerializer.SerializeAsync(stream, value, JsonSerializerOptionsProvider.Web);
             return ValueTask.FromResult(stream);
         }
