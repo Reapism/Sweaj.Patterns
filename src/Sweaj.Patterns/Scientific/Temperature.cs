@@ -2,6 +2,27 @@
 
 namespace Sweaj.Patterns.Scientific
 {
+    /// <summary>
+    /// Enum representing temperature units.
+    /// </summary>
+    public enum TemperatureUnit : byte
+    {
+        /// <summary>
+        /// Celsius temperature unit.
+        /// </summary>
+        Celsius,
+
+        /// <summary>
+        /// Fahrenheit temperature unit.
+        /// </summary>
+        Fahrenheit,
+
+        /// <summary>
+        /// Kelvin temperature unit.
+        /// </summary>
+        Kelvin
+    }
+
     public sealed class Temperature :
         IMeasurement<double, TemperatureUnit>,
         IConverter<TemperatureUnit, Temperature>,
@@ -84,47 +105,35 @@ namespace Sweaj.Patterns.Scientific
 
         public Temperature ToCelsius()
         {
-            switch (Unit)
+            return Unit switch
             {
-                case TemperatureUnit.Celsius:
-                    return this;
-                case TemperatureUnit.Fahrenheit:
-                    return new Temperature((Value - CelsiusToFahrenheitOffset) / CelsiusToFahrenheitConversion + CelsiusToKelvin, TemperatureUnit.Celsius);
-                case TemperatureUnit.Kelvin:
-                    return new Temperature(Value - CelsiusToKelvin, TemperatureUnit.Celsius);
-                default:
-                    throw new ArgumentException("Invalid temperature unit");
-            }
+                TemperatureUnit.Celsius => this,
+                TemperatureUnit.Fahrenheit => new Temperature((Value - CelsiusToFahrenheitOffset) / CelsiusToFahrenheitConversion + CelsiusToKelvin, TemperatureUnit.Celsius),
+                TemperatureUnit.Kelvin => new Temperature(Value - CelsiusToKelvin, TemperatureUnit.Celsius),
+                _ => throw new ArgumentException("Invalid temperature unit"),
+            };
         }
 
         public Temperature ToFahrenheit()
         {
-            switch (Unit)
+            return Unit switch
             {
-                case TemperatureUnit.Fahrenheit:
-                    return this;
-                case TemperatureUnit.Celsius:
-                    return new Temperature((Value - CelsiusToKelvin) * CelsiusToFahrenheitConversion + CelsiusToFahrenheitOffset, TemperatureUnit.Fahrenheit);
-                case TemperatureUnit.Kelvin:
-                    return new Temperature(Value * CelsiusToFahrenheitConversion - (CelsiusToFahrenheitOffset + CelsiusToKelvin), TemperatureUnit.Fahrenheit);
-                default:
-                    throw new ArgumentException("Invalid temperature unit");
-            }
+                TemperatureUnit.Fahrenheit => this,
+                TemperatureUnit.Celsius => new Temperature((Value - CelsiusToKelvin) * CelsiusToFahrenheitConversion + CelsiusToFahrenheitOffset, TemperatureUnit.Fahrenheit),
+                TemperatureUnit.Kelvin => new Temperature(Value * CelsiusToFahrenheitConversion - (CelsiusToFahrenheitOffset + CelsiusToKelvin), TemperatureUnit.Fahrenheit),
+                _ => throw new ArgumentException("Invalid temperature unit"),
+            };
         }
 
         public Temperature ToKelvin()
         {
-            switch (Unit)
+            return Unit switch
             {
-                case TemperatureUnit.Kelvin:
-                    return this;
-                case TemperatureUnit.Celsius:
-                    return new Temperature(Value + CelsiusToKelvin, TemperatureUnit.Kelvin);
-                case TemperatureUnit.Fahrenheit:
-                    return new Temperature((Value - CelsiusToFahrenheitOffset) / CelsiusToFahrenheitConversion + CelsiusToKelvin, TemperatureUnit.Kelvin);
-                default:
-                    throw new ArgumentException("Invalid temperature unit");
-            }
+                TemperatureUnit.Kelvin => this,
+                TemperatureUnit.Celsius => new Temperature(Value + CelsiusToKelvin, TemperatureUnit.Kelvin),
+                TemperatureUnit.Fahrenheit => new Temperature((Value - CelsiusToFahrenheitOffset) / CelsiusToFahrenheitConversion + CelsiusToKelvin, TemperatureUnit.Kelvin),
+                _ => throw new ArgumentException("Invalid temperature unit"),
+            };
         }
 
         public static Temperature FromCelcius(double value)
@@ -147,12 +156,13 @@ namespace Sweaj.Patterns.Scientific
             return new Temperature(value, temperatureUnit);
         }
 
-        public Temperature Convert(TemperatureUnit unit)
+        public ConversionResult<Temperature> Convert(TemperatureUnit value)
         {
-            if (Unit == unit) return this;
+            if (Unit == value)
+                return ConversionResult<Temperature>.FromSuccessful(this);
 
             double newValue;
-            switch (unit)
+            switch (value)
             {
                 case TemperatureUnit.Celsius:
                     newValue = ToCelsius().Value;
@@ -164,10 +174,10 @@ namespace Sweaj.Patterns.Scientific
                     newValue = ToKelvin().Value;
                     break;
                 default:
-                    throw new ArgumentException("Invalid temperature unit");
+                    return ConversionResult<Temperature>.FromFailure("The provided unit is not supported");
             }
 
-            return new Temperature(newValue, unit);
+            return ConversionResult<Temperature>.FromSuccessful(From(newValue, value));
         }
     }
 }
