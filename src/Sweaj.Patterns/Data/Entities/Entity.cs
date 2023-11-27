@@ -28,23 +28,4 @@ namespace Sweaj.Patterns.Data.Entities
 
         public virtual bool IsEmpty() => Id.Equals(default);
     }
-
-    /// <summary>
-    /// Represents a polymorphic entity with a default key type of <see cref="Guid"/>.
-    /// </summary>
-    public abstract class PolymorphicEntity : PolymorphicEntity<Guid>
-    { }
-
-    public abstract class PolymorphicEntity<TKey> : Entity<TKey>, IReferenceable<TKey>
-        where TKey : IEquatable<TKey>, new()
-    {
-        public TKey ReferenceId { get; set; } = new();
-        public string ReferenceName { get; set; } = string.Empty;
-
-        public void ApplyPolymorphicEntity(TKey polymorphicId, string polymorphicTypeName)
-        {
-            ReferenceId = polymorphicId;
-            ReferenceName = polymorphicTypeName;
-        }
-    }
 }
