@@ -1,10 +1,12 @@
-﻿using Sweaj.Patterns.Data.Services;
+﻿using Sweaj.Patterns.Data.Values;
 using System.Globalization;
 
 namespace Sweaj.Patterns.Data.ValueObjects
 {
     public readonly struct Money : IValueProvider<decimal>, IEquatable<Money>, IComparable<Money>, IComparer<Money>
     {
+        private const string DefaultCurrency = "USD";
+        private const int DefaultDecimalPlaces = 2;
         public decimal Value { get; }
         public string Currency { get; }
         public int DecimalPlaces { get; }
@@ -92,7 +94,7 @@ namespace Sweaj.Patterns.Data.ValueObjects
 
         public static implicit operator Money(decimal value)
         {
-            return new Money(value, "USD", 2);
+            return new Money(value, DefaultCurrency, DefaultDecimalPlaces);
         }
 
         private static void ValidateCurrency(Money a, Money b)
