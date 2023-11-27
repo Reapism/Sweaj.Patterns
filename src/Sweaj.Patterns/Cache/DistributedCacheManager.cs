@@ -63,7 +63,7 @@ namespace Sweaj.Patterns.Cache
                 return CacheStore<TValue>.Empty();
 
             var json = Encoding.UTF8.GetString(bytes);
-            var deserializedValue = await serializer.DeserializeAsync(json, cancellationToken);
+            var deserializedValue = serializer.Deserialize(json);
 
             if (deserializedValue is null)
                 return CacheStore<TValue>.Empty();
