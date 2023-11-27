@@ -1,6 +1,4 @@
-﻿using Sweaj.Patterns.Response;
-
-namespace Sweaj.Patterns.Responses
+﻿namespace Sweaj.Patterns.Rest.Response
 {
     public class ApiResponse : IResult<Guid>
     {
@@ -25,6 +23,8 @@ namespace Sweaj.Patterns.Responses
         public string JsonMessage => IsJsonMessage(InternalMessage[0]) ? InternalMessage : string.Empty;
 
         public Guid ResultId { get; }
+
+        public Guid CorrelationId => throw new NotImplementedException();
 
         /// <summary>
         /// Returns whether the <paramref name="httpStatusCode"/> is a valid HTTP status code using rfc9110 standard.
@@ -59,7 +59,7 @@ namespace Sweaj.Patterns.Responses
 
         public static ApiResponse From(string message, int httpStatusCode)
         {
-            return new ApiResponse(message, Guard.Against.AgainstExpression<int>(e => IsHttpStatusCode(e), httpStatusCode, InvalidHttpCodeErrorMessage));
+            return new ApiResponse(message, Guard.Against.AgainstExpression(e => IsHttpStatusCode(e), httpStatusCode, InvalidHttpCodeErrorMessage));
         }
 
         public static ApiResponse Ok(string message = nameof(Ok))
@@ -110,7 +110,7 @@ namespace Sweaj.Patterns.Responses
 
         public static ApiResponse<T> From(string message, int httpStatusCode, T result)
         {
-            return new ApiResponse<T>(message, Guard.Against.AgainstExpression<int>(e => IsHttpStatusCode(e), httpStatusCode, InvalidHttpCodeErrorMessage), result);
+            return new ApiResponse<T>(message, Guard.Against.AgainstExpression(e => IsHttpStatusCode(e), httpStatusCode, InvalidHttpCodeErrorMessage), result);
         }
         public static ApiResponse<T> Ok(string message = nameof(Ok), T result = default)
         {

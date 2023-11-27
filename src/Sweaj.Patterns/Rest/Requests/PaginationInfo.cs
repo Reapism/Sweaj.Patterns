@@ -1,4 +1,4 @@
-﻿namespace Sweaj.Patterns.Requests
+﻿namespace Sweaj.Patterns.Rest.Requests
 {
     public sealed class PaginationInfo
     {
@@ -42,14 +42,6 @@
 
             return new PaginationInfo(TotalPages, PageOffset - 1, RowsPerPage, TotalRowCount);
         }
-
-        public static PaginationInfo FromPage(int totalPages, long rowsPerPage)
-        {
-            var totalRowCount = Guard.Against.NegativeOrZero(totalPages) * Guard.Against.NegativeOrZero(rowsPerPage);
-            const int pageOffset = 0;
-            return new PaginationInfo(totalPages, pageOffset, rowsPerPage, totalRowCount);
-        }
-
 
         public static PaginationInfo FromTotal(long rowsPerPage, long totalRowCount)
         {

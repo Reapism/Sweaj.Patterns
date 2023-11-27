@@ -3,7 +3,7 @@ using Sweaj.Patterns.Data.Entities;
 using Sweaj.Patterns.Mapping;
 using Sweaj.Patterns.NullObject;
 
-namespace Sweaj.Patterns.Data.Services
+namespace Sweaj.Patterns.Data.Values
 {
     public sealed class ValueStore<TValue> : IValueProvider<TValue>, IEmpty
     {
@@ -37,7 +37,7 @@ namespace Sweaj.Patterns.Data.Services
             return new ValueStore<TEntity>(dataStore.Value, ValueResultStatus.DataStore);
         }
 
-        public static ValueStore<TValue> FromDataStore<TEntity>(IEntityToValueMapper<TEntity, TValue> mapper, DataStore<Guid, TEntity> dataStore)
+        public static ValueStore<TValue> FromDataStore<TEntity>(IMapper<TEntity, TValue> mapper, DataStore<Guid, TEntity> dataStore)
             where TEntity : Entity
         {
             var value = mapper.Convert(dataStore.Value);

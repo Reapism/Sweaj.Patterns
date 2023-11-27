@@ -3,6 +3,6 @@
     public interface IOptionsProvider<TOptions>
         where TOptions : new()
     {
-        public TOptions Options { get; set; }
+        public TOptions Options { get; }
     }
 }

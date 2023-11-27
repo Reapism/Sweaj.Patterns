@@ -1,4 +1,4 @@
-﻿using Sweaj.Patterns.Data.Services;
+﻿using Sweaj.Patterns.Data.Values;
 
 namespace Sweaj.Patterns.Cache
 {
