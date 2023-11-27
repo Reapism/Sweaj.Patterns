@@ -1,4 +1,4 @@
-﻿using Sweaj.Patterns.Data.Services;
+﻿using Sweaj.Patterns.Data.Values;
 
 namespace Sweaj.Patterns.Converters
 {
@@ -15,6 +15,7 @@ namespace Sweaj.Patterns.Converters
             Value = isSuccessful ? Guard.Against.Null(result) : default;
             ErrorMessage = errorMessage;
         }
+
         /// <summary>
         /// The converted value.
         /// </summary>
