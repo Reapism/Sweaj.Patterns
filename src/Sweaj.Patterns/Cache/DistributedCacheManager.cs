@@ -31,7 +31,7 @@ namespace Sweaj.Patterns.Cache
             }
         }
 
-        public override async Task<CacheStore<TValue>> ProcessWithValueAsync<TValue>(CacheValueRequest<TValue> cacheRequest, IJsonSerializer<TValue> serializer, CancellationToken cancellationToken = default)
+        public override async Task<CacheStore<TValue>> ProcessWithValueAsync<TValue>(CacheValueRequest<TValue> cacheRequest, IJsonSerializer serializer, CancellationToken cancellationToken = default)
         {
             Guard.Against.Null(cacheRequest, nameof(cacheRequest));
 
@@ -56,14 +56,14 @@ namespace Sweaj.Patterns.Cache
             }
         }
 
-        private async Task<CacheStore<TValue>> GetFromCacheOnly<TValue>(CacheValueRequest<TValue> cacheRequest, IJsonSerializer<TValue> serializer, CancellationToken cancellationToken = default)
+        private async Task<CacheStore<TValue>> GetFromCacheOnly<TValue>(CacheValueRequest<TValue> cacheRequest, IJsonSerializer serializer, CancellationToken cancellationToken = default)
         {
             var bytes = await distributedCache.GetAsync(cacheRequest.CacheKey, cancellationToken);
             if (bytes is null)
                 return CacheStore<TValue>.Empty();
 
             var json = Encoding.UTF8.GetString(bytes);
-            var deserializedValue = serializer.Deserialize(json);
+            var deserializedValue = serializer.Deserialize<TValue>(json);
 
             if (deserializedValue is null)
                 return CacheStore<TValue>.Empty();
@@ -71,14 +71,14 @@ namespace Sweaj.Patterns.Cache
             return CacheStore<TValue>.FromCache(cacheRequest, deserializedValue);
         }
 
-        private async Task<CacheStore<TValue>> GetFromCacheOrFactory<TValue>(CacheValueRequest<TValue> cacheRequest, IJsonSerializer<TValue> serializer, CancellationToken cancellationToken = default)
+        private async Task<CacheStore<TValue>> GetFromCacheOrFactory<TValue>(CacheValueRequest<TValue> cacheRequest, IJsonSerializer serializer, CancellationToken cancellationToken = default)
         {
             var bytes = await distributedCache.GetAsync(cacheRequest.CacheKey, cancellationToken);
             if (bytes is null)
                 return CacheStore<TValue>.Empty();
 
             var json = Encoding.UTF8.GetString(bytes);
-            var deserializedValue = serializer.Deserialize(json);
+            var deserializedValue = serializer.Deserialize<TValue>(json);
 
             if (deserializedValue is not null)
                 return CacheStore<TValue>.FromCache(cacheRequest, deserializedValue);
