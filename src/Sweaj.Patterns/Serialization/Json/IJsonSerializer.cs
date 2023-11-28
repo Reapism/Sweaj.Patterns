@@ -1,11 +1,10 @@
 ﻿namespace Sweaj.Patterns.Serialization.Json
 {
-    public interface IJsonSerializer<TValue> : ISerializer<string, TValue>
+    public interface IJsonSerializer
     {
-        ValueTask<Stream> SerializeAsync(TValue value);
-        ValueTask<TValue> DeserializeAsync(Stream value);
+        string Serialize<T>(T value);
+        T Deserialize<T>(string json);
+        ValueTask<Stream> SerializeAsync<TValue>(TValue value);
+        ValueTask<TValue> DeserializeAsync<TValue>(Stream value);
     }
-
-    public interface IByteSerializer<TValue> : ISerializer<TValue, byte[]>
-    { }
 }
