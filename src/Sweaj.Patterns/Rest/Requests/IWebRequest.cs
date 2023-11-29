@@ -1,6 +1,4 @@
-﻿using Sweaj.Patterns.Dates;
-
-namespace Sweaj.Patterns.Rest.Requests
+﻿namespace Sweaj.Patterns.Rest.Requests
 {
     /// <summary>
     /// A generic web request with a generic payload of <typeparamref name="TValue"/>.
@@ -11,9 +9,8 @@ namespace Sweaj.Patterns.Rest.Requests
     {
         public WebRequest(
             [NotNull, ValidatedNotNull] TValue value,
-            IDateTimeProvider dateTimeProvider,
             CancellationToken cancellationToken)
-            : base(value, dateTimeProvider, cancellationToken)
+            : base(value, cancellationToken)
         {
             Headers = new Dictionary<string, string>();
         }
