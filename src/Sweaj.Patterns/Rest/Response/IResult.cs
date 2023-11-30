@@ -12,28 +12,28 @@ namespace Sweaj.Patterns.Rest.Response
         /// Initializes a result instance using the default constructor from
         /// </summary>
         protected Result(
-            [NotNull, ValidatedNotNull] Guid resultId,
             [NotNull, ValidatedNotNull] Guid correlationId,
             [NotNull, ValidatedNotNull] TValue value)
         {
-            ResultId = Guard.Against.Null(resultId);
             CorrelationId = Guard.Against.Null(correlationId);
             Value = Guard.Against.Null(value);
+
+            ResultId = Guid.NewGuid();
         }
 
-        public static Result<TValue> Create(Guid resultId, Guid correlationId, TValue value)
+        public static Result<TValue> Create(Guid correlationId, TValue value)
         {
-            return new Result<TValue>(resultId, correlationId, value);
+            return new Result<TValue>(correlationId, value);
         }
 
-        public static Result<TValue> Create(Guid resultId, Guid correlationId, IValueProvider<TValue> valueProvider)
+        public static Result<TValue> Create(Guid correlationId, IValueProvider<TValue> valueProvider)
         {
-            return new Result<TValue>(resultId, correlationId, valueProvider.Value);
+            return new Result<TValue>(correlationId, valueProvider.Value);
         }
 
-        public static async Task<Result<TValue>> Create<TParams>(Guid resultId, Guid correlationId, IValueFactory<TValue> valueFactory, TParams parameters, CancellationToken cancellationToken)
+        public static async Task<Result<TValue>> Create<TParams>(Guid correlationId, IValueFactory<TValue> valueFactory, TParams parameters, CancellationToken cancellationToken)
         {
-            return new Result<TValue>(resultId, correlationId, await valueFactory.CreateValueAsync(cancellationToken));
+            return new Result<TValue>(correlationId, await valueFactory.CreateValueAsync(cancellationToken));
         }
 
         public Guid ResultId { get; }

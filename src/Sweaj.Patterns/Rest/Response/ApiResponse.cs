@@ -5,9 +5,15 @@ namespace Sweaj.Patterns.Rest.Response
     public sealed class ApiResponse<TValue> : Result<TValue>
     {
         protected const string InvalidHttpCodeErrorMessage = "The given http status code is invalid based on the rfc9110 standard.";
+        protected const string OkMessage = "OK";
+        protected const string CreatedMessage = "CREATED";
+        protected const string AcceptedMessage = "ACCEPTED";
+        protected const string BadRequestMessage = "BAD REQUEST";
+        protected const string UnauthorizedMessage = "UNAUTHORIZED";
+        protected const string NotFoundMessage = "NOT FOUND";
 
-        private ApiResponse(Guid correlationId, string message, int httpStatusCode, TValue value)
-            : base(Guid.NewGuid(), correlationId, value)
+        private ApiResponse(Guid correlationId, TValue value, string message, int httpStatusCode)
+            : base(correlationId, value)
         {
             var trimmedMessage = Guard.Against.NullOrWhiteSpace(message).Trim();
 
@@ -23,38 +29,38 @@ namespace Sweaj.Patterns.Rest.Response
         public string ApiMessage => !IsJsonMessage(InternalMessage[0]) ? InternalMessage : string.Empty;
         public string JsonMessage => IsJsonMessage(InternalMessage[0]) ? InternalMessage : string.Empty;
 
-        public static ApiResponse<TValue> From(Guid correlationId, string message, int httpStatusCode, TValue result)
+        public static ApiResponse<TValue> From(Guid correlationId, TValue value, string message, int httpStatusCode)
         {
-            return new ApiResponse<TValue>(correlationId, message, Guard.Against.AgainstExpression(e => IsHttpStatusCode(e), httpStatusCode, InvalidHttpCodeErrorMessage), result);
+            return new ApiResponse<TValue>(correlationId, value, message, Guard.Against.AgainstExpression(e => IsHttpStatusCode(e), httpStatusCode, InvalidHttpCodeErrorMessage));
         }
-        public static ApiResponse<TValue> Ok(Guid correlationId, string message = nameof(Ok), TValue result = default)
+        public static ApiResponse<TValue> Ok(Guid correlationId, TValue value = default, string message = OkMessage)
         {
-            return new ApiResponse<TValue>(correlationId, message, 200, result);
-        }
-
-        public static ApiResponse<TValue> Created(Guid correlationId, string message = nameof(Created), TValue result = default)
-        {
-            return new ApiResponse<TValue>(correlationId, message, 201, result);
+            return new ApiResponse<TValue>(correlationId, value, message, 200);
         }
 
-        public static ApiResponse<TValue> Accepted(Guid correlationId, string message = nameof(Accepted), TValue result = default)
+        public static ApiResponse<TValue> Created(Guid correlationId, TValue value = default, string message = CreatedMessage)
         {
-            return new ApiResponse<TValue>(correlationId, message, 202, result);
+            return new ApiResponse<TValue>(correlationId, value, message, 201);
         }
 
-        public static ApiResponse<TValue> BadRequest(Guid correlationId, string message = nameof(BadRequest), TValue result = default)
+        public static ApiResponse<TValue> Accepted(Guid correlationId, TValue value = default, string message = AcceptedMessage)
         {
-            return new ApiResponse<TValue>(correlationId, message, 400, result);
+            return new ApiResponse<TValue>(correlationId, value, message, 202);
         }
 
-        public static ApiResponse<TValue> Unauthorized(Guid correlationId, string message = nameof(Unauthorized), TValue result = default)
+        public static ApiResponse<TValue> BadRequest(Guid correlationId, TValue value = default, string message = BadRequestMessage)
         {
-            return new ApiResponse<TValue>(correlationId, message, 401, result);
+            return new ApiResponse<TValue>(correlationId, value, message, 400);
         }
 
-        public static ApiResponse<TValue> NotFound(Guid correlationId, string message = nameof(NotFound), TValue result = default)
+        public static ApiResponse<TValue> Unauthorized(Guid correlationId, TValue value = default, string message = UnauthorizedMessage)
         {
-            return new ApiResponse<TValue>(correlationId, message, 404, result);
+            return new ApiResponse<TValue>(correlationId, value, message, 401);
+        }
+
+        public static ApiResponse<TValue> NotFound(Guid correlationId, TValue value = default, string message = NotFoundMessage)
+        {
+            return new ApiResponse<TValue>(correlationId, value, message, 404);
         }
 
         public static bool IsHttpStatusCode(int httpStatusCode)
