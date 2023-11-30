@@ -1,6 +1,6 @@
 ﻿using Sweaj.Patterns.Data.Entities;
 
-namespace Sweaj.Patterns.Data
+namespace Sweaj.Patterns.Data.Repositories
 {
     /// <summary>
     /// Provides a mechanism for retrieving a <see cref="IRepository"/>

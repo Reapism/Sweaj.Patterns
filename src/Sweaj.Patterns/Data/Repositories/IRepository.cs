@@ -1,6 +1,6 @@
 ﻿using Sweaj.Patterns.Data.Entities;
 
-namespace Sweaj.Patterns.Data
+namespace Sweaj.Patterns.Data.Repositories
 {
     /// <summary>
     /// Contract for CRUDing at generic method level.
