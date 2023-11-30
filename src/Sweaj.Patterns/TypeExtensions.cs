@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Sweaj.Patterns.Tests
+namespace Sweaj.Patterns
 {
 
     public static class TypeExtensions
