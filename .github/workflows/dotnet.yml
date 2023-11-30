@@ -50,7 +50,7 @@ jobs:
         git commit -m "Update project version to ${{ steps.version-update.outputs.new_version }}"
         git push
       env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACTIONS }}
 
     - name: BUILD ${{ env.PROJECT_FILE }} ${{ env.BUILD_CONFIGURATION }}
       run: dotnet build ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }}
