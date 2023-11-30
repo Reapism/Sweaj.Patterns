@@ -10,7 +10,7 @@ namespace Sweaj.Patterns.Rest.Requests
 
     public abstract class Request<TValue> : IRequest<Guid, TValue>
     {
-        protected Request([NotNull, ValidatedNotNull] TValue value, Guid correlationId, CancellationToken cancellationToken)
+        protected Request(Guid correlationId, [NotNull, ValidatedNotNull] TValue value, CancellationToken cancellationToken)
         {
             Value = Guard.Against.Null(value);
             CorrelationId = correlationId;
