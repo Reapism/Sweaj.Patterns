@@ -2,30 +2,26 @@
 
 namespace Sweaj.Patterns.Rest.Requests
 {
-    public abstract class Request : ICorrelationIdProvider<Guid>
+    public interface IRequest<TKey, TValue> : ICorrelationIdProvider<TKey>, IValueProvider<TValue>
+         where TKey : IEquatable<TKey>, new()
     {
-        public Request(CancellationToken cancellationToken)
-        {
-            CancellationToken = cancellationToken;
-            CorrelationId = Guid.NewGuid();
-        }
-
-        public CancellationToken CancellationToken { get; }
-
-        public Guid CorrelationId { get; }
+        CancellationToken CancellationToken { get; }
     }
 
-    public abstract class Request<TValue> : Request, IValueProvider<TValue>
+    public abstract class Request<TValue> : IRequest<Guid, TValue>
     {
-        protected Request([NotNull, ValidatedNotNull] TValue value, CancellationToken cancellationToken)
-            : base(cancellationToken)
+        protected Request([NotNull, ValidatedNotNull] TValue value, Guid correlationId, CancellationToken cancellationToken)
         {
             Value = Guard.Against.Null(value);
+            CorrelationId = correlationId;
+            CancellationToken = cancellationToken;
         }
 
         /// <summary>
         /// The payload of the request.
         /// </summary>
         public TValue Value { get; }
+        public Guid CorrelationId { get; }
+        public CancellationToken CancellationToken { get; }
     }
 }

@@ -2,13 +2,7 @@
 
 namespace Sweaj.Patterns.Rest.Response
 {
-    public interface IResult<TKey> : ICorrelationIdProvider<TKey>
-        where TKey : IEquatable<TKey>
-    {
-        TKey ResultId { get; }
-    }
-
-    public interface IResult<TKey, TValue> : IResult<TKey>, IValueProvider<TValue>
+    public interface IResult<TKey, TValue> : ICorrelationIdProvider<TKey>, IValueProvider<TValue>
         where TKey : IEquatable<TKey>
     { }
 
