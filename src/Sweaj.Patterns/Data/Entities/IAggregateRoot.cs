@@ -1,4 +1,4 @@
-﻿namespace Sweaj.Patterns.Data
+﻿namespace Sweaj.Patterns.Data.Entities
 {
     /// <summary>
     /// Represents an aggregate root in the domain model.

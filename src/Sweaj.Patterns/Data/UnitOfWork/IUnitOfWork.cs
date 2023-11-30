@@ -1,6 +1,7 @@
 ﻿using Sweaj.Patterns.Data.Entities;
+using Sweaj.Patterns.Data.Repositories;
 
-namespace Sweaj.Patterns.Data
+namespace Sweaj.Patterns.Data.UnitOfWork
 {
     /// <summary>
     /// Interface for unit of work pattern.
