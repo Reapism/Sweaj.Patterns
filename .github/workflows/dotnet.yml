@@ -1,4 +1,4 @@
-name: .NET CI/CD pipeline
+name: CI/CD PIPELINE
 
 env:
   IS_BETA: true
@@ -41,6 +41,16 @@ jobs:
         sed -i "s/<Version>$current_version<\/Version>/<Version>$new_version<\/Version>/" ${{ env.PROJECT_FILE }}
         echo "::set-output name=new_version::$new_version"
         echo "Updated version to $new_version"
+
+    - name: COMMIT AND PUSH VERSION UPDATE
+      run: |
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+        git add ${{ env.PROJECT_FILE }}
+        git commit -m "Update project version to ${{ steps.version-update.outputs.new_version }}"
+        git push
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: BUILD ${{ env.PROJECT_FILE }} ${{ env.BUILD_CONFIGURATION }}
       run: dotnet build ${{ env.PROJECT_FILE }} -c ${{ env.BUILD_CONFIGURATION }}
