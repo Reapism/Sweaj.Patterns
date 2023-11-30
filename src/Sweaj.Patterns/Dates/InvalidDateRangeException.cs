@@ -1,4 +1,4 @@
-﻿namespace Sweaj.Patterns.Data.ValueObjects
+﻿namespace Sweaj.Patterns.Dates
 {
     public class InvalidDateRangeException : Exception
     {
