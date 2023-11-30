@@ -8,11 +8,9 @@ namespace Sweaj.Patterns.Rest.Response
         TKey ResultId { get; }
     }
 
-    public interface IResult<TKey, TResult> : IResult<TKey>, IValueProvider<TResult>
+    public interface IResult<TKey, TValue> : IResult<TKey>, IValueProvider<TValue>
         where TKey : IEquatable<TKey>
-    {
-
-    }
+    { }
 
     public class Result<TKey, TValue> : IResult<TKey, TValue>
         where TKey : IEquatable<TKey>, new()
@@ -25,9 +23,14 @@ namespace Sweaj.Patterns.Rest.Response
             [NotNull, ValidatedNotNull] TKey correlationId,
             [NotNull, ValidatedNotNull] TValue value)
         {
-            ResultId = resultId;
-            CorrelationId = correlationId;
+            ResultId = Guard.Against.Null(resultId);
+            CorrelationId = Guard.Against.Null(correlationId);
             Value = Guard.Against.Null(value);
+        }
+
+        public static Result<TKey, TValue> Create(TKey resultId, TKey correlationId, TValue value)
+        {
+            return new Result<TKey, TValue>(resultId, correlationId, value);
         }
 
         public static Result<TKey, TValue> Create(TKey resultId, TKey correlationId, IValueProvider<TValue> valueProvider)
@@ -38,23 +41,6 @@ namespace Sweaj.Patterns.Rest.Response
         public static async Task<Result<TKey, TValue>> Create<TParams>(TKey resultId, TKey correlationId, IValueFactory<TValue> valueFactory, TParams parameters, CancellationToken cancellationToken)
         {
             return new Result<TKey, TValue>(resultId, correlationId, await valueFactory.CreateValueAsync(cancellationToken));
-        }
-
-        /// <summary>
-        /// Create a minimally instantiated derived result.
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <typeparam name="TParams"></typeparam>
-        /// <param name="resultId"></param>
-        /// <param name="correlationId"></param>
-        /// <param name="valueFactory"></param>
-        /// <param name="parameters"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public static async Task<TResult> Create<TResult, TParams>(TKey resultId, TKey correlationId, IValueFactory<TValue> valueFactory, TParams parameters, CancellationToken cancellationToken)
-            where TResult : Result<TKey, TValue>
-        {
-            return (TResult) new Result<TKey, TValue>(resultId, correlationId, await valueFactory.CreateValueAsync(cancellationToken));
         }
 
         public TKey ResultId { get; }

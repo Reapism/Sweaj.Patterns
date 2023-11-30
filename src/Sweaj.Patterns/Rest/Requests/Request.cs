@@ -15,9 +15,9 @@ namespace Sweaj.Patterns.Rest.Requests
         public Guid CorrelationId { get; }
     }
 
-    public abstract class Request<T> : Request, IValueProvider<T>
+    public abstract class Request<TValue> : Request, IValueProvider<TValue>
     {
-        protected Request([NotNull, ValidatedNotNull] T value, CancellationToken cancellationToken)
+        protected Request([NotNull, ValidatedNotNull] TValue value, CancellationToken cancellationToken)
             : base(cancellationToken)
         {
             Value = Guard.Against.Null(value);
@@ -26,6 +26,6 @@ namespace Sweaj.Patterns.Rest.Requests
         /// <summary>
         /// The payload of the request.
         /// </summary>
-        public T Value { get; }
+        public TValue Value { get; }
     }
 }
