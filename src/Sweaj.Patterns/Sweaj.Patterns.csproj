@@ -4,7 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>1.1.8-beta</Version>
+		<Version>1.2.0</Version>
 		<Title>Sweaj.Patterns</Title>
 		<Description></Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -21,20 +21,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="AI\Pipelines\**" />
 	  <Compile Remove="Clients\**" />
 	  <Compile Remove="Initializer\**" />
-	  <Compile Remove="Options\Validations\**" />
 	  <Compile Remove="Ui\**" />
-	  <EmbeddedResource Remove="AI\Pipelines\**" />
 	  <EmbeddedResource Remove="Clients\**" />
 	  <EmbeddedResource Remove="Initializer\**" />
-	  <EmbeddedResource Remove="Options\Validations\**" />
 	  <EmbeddedResource Remove="Ui\**" />
-	  <None Remove="AI\Pipelines\**" />
 	  <None Remove="Clients\**" />
 	  <None Remove="Initializer\**" />
-	  <None Remove="Options\Validations\**" />
 	  <None Remove="Ui\**" />
 	</ItemGroup>
 
@@ -50,6 +44,7 @@
 		<PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
 	</ItemGroup>
 
 </Project>

@@ -2,7 +2,6 @@ using System.Reflection;
 
 namespace Sweaj.Patterns
 {
-
     public static class TypeExtensions
     {
         public static IEnumerable<Type> GetTypesWithAttribute<TAttribute>([NotNull] this Assembly assembly, [CanBeNull] Func<TAttribute, Type, bool> filter = null)
