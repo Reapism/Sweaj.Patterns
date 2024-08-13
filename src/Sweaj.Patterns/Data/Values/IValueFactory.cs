@@ -1,4 +1,6 @@
-﻿namespace Sweaj.Patterns.Data.Values
+﻿using Sweaj.Patterns.Attributes;
+
+namespace Sweaj.Patterns.Data.Values
 {
     /// <summary>
     /// Specifies that a derrived type has the necessary information to create itself asynchronously.

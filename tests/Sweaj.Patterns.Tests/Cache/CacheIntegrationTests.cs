@@ -4,7 +4,7 @@ using Sweaj.Patterns.Cache;
 
 namespace Sweaj.Patterns.Tests.Cache
 {
-    public sealed class RandomValue : ICacheKeyConstructor
+    public sealed class RandomValue : ICachable
     {
         public RandomValue(string value)
         {
@@ -12,10 +12,8 @@ namespace Sweaj.Patterns.Tests.Cache
         }
         public string Value { get; }
 
-        public CacheKey CreateCacheKey()
-        {
-            return CacheKey.Create("|", nameof(RandomValue), Value);
-        }
+        public CacheKey CacheKey => CacheKey.Create("|", nameof(RandomValue), Value);
+
     }
 
     public class CacheIntegrationTests
@@ -24,7 +22,7 @@ namespace Sweaj.Patterns.Tests.Cache
         public void CacheWorksE2E()
         {
             //var randomValue = new RandomValue(Random.Shared.Next().ToString());
-            //var cacheManager = new CacheManager(IMemoryCache)
+            //CacheManagerBase cacheManager = new DistributedCacheManager(new DistributedCacheManager(MemoryCac))
             //var randomValueStore = CacheRequest<RandomValue>.SetCacheOnly(randomValue, CacheDurationOptions.FromRelativeToNowExpiration(TimeSpan.FromMinutes(1))).Get();
 
 

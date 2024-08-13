@@ -29,7 +29,7 @@ namespace Sweaj.Patterns.Rest.Response
             return new Result<TValue?>(valueProvider.Value);
         }
 
-        public static async Task<Result<TValue?>> Create<TParams>(IValueFactory<TValue> valueFactory, TParams parameters, in CancellationToken cancellationToken)
+        public static async Task<Result<TValue?>> Create<TParams>(IValueFactory<TValue> valueFactory, TParams parameters, CancellationToken cancellationToken)
         {
             return new Result<TValue?>(await valueFactory.CreateValueAsync(cancellationToken));
         }
