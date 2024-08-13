@@ -1,12 +1,22 @@
 ﻿using Sweaj.Patterns.NullObject;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Sweaj.Patterns.Guards
 {
-
     public static class IEquatableGuardExtensions
     {
-        public static T NullOrEmpty<T>(this IGuardClause guardClause, T value, [CallerMemberName]string parameterName = "")
+        public static BigInteger NegativeOrZero(this IGuardClause guardClause, BigInteger value, [CallerMemberName] string parameterName = "")
+        {
+            if (BigInteger.IsNegative(value) || BigInteger.Zero == value)
+            {
+                throw new ArgumentException($"The value {value} must be greater than zero.");
+            }
+
+            return value;
+        }
+
+        public static T NullOrEmpty<T>(this IGuardClause guardClause, T value, [CallerMemberName] string parameterName = "")
             where T : IEmpty
         {
             if (value is null)
