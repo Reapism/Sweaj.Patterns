@@ -2,7 +2,8 @@
 
 A library intended for easily adapting familiar & flexible abstractions of many patterns I use today. Keep in mind that this is opinionated, and what drives me is flexible, but minimally functional. The library uses common contracts across multiple patterns which guides the development of a cohesive application, it makes it more rigid to follow specific patterns if you choose to, which makes diagnostics more simple, and architecture more guided.
 
-# Adisory [status](status.png)
+# Advisory 
+
 This library is under heavy development, I wouldn't advise using this library yet as most of the updates contain breaking changes. I am currently
 updating this library as I continue to work with these patterns and find a good balance of flexibility and an opinionated approach to its contracts and implementations. 
 
