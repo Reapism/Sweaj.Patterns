@@ -1,4 +1,6 @@
-﻿namespace Sweaj.Patterns.Data.Entities
+﻿using Sweaj.Patterns.Attributes;
+
+namespace Sweaj.Patterns.Data.Entities
 {
     /// <summary>
     /// Represents an aggregate root in the domain model.
@@ -14,6 +16,7 @@
     /// An entity that has this interface should have its own repository and should be the only object that 
     /// client code loads directly.
     /// </remarks>
+    [Trackable]
     public interface IAggregateRoot
     { }
 }

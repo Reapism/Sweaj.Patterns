@@ -1,5 +1,8 @@
-﻿namespace Sweaj.Patterns.Serialization.Json
+﻿using Sweaj.Patterns.Attributes;
+
+namespace Sweaj.Patterns.Serialization.Json
 {
+    [Trackable]
     public interface IJsonSerializer
     {
         string Serialize<T>(T value);

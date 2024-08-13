@@ -1,9 +1,16 @@
-﻿using Sweaj.Patterns.Data.Entities;
+﻿using Sweaj.Patterns.Attributes;
+using Sweaj.Patterns.Data.Entities;
 using System.Diagnostics;
 
 namespace Sweaj.Patterns.Data.Values
 {
-    public class DataStore<TKey, TEntity> : IValueProvider<TEntity>
+    /// <summary>
+    /// Encapsulates a <see cref="Value"/> captured from a data store and describes how it was retrieved and the duration it took! 
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TEntity"></typeparam>
+    [Trackable]
+    public class DataStore<TKey, TEntity> : IValueProvider<TEntity?>
         where TKey : IEquatable<TKey>, new()
         where TEntity : Entity<TKey>
     {
@@ -14,11 +21,11 @@ namespace Sweaj.Patterns.Data.Values
             Status = valueResultStatus;
         }
 
-        public TEntity Value { get; } = default;
+        public TEntity Value { get; }
 
         public bool HasValue => Value is not null;
         public ValueResultStatus Status { get; }
-        TimeSpan Duration { get; }
+        public TimeSpan Duration { get; }
 
         public static DataStore<TKey, TEntity> FromDatastore(
             Func<TEntity> getValueDelegate)

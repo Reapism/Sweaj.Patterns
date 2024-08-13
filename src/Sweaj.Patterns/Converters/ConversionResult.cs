@@ -1,4 +1,5 @@
-﻿using Sweaj.Patterns.Data.Values;
+﻿using Sweaj.Patterns.Attributes;
+using Sweaj.Patterns.Data.Values;
 
 namespace Sweaj.Patterns.Converters
 {
@@ -7,7 +8,8 @@ namespace Sweaj.Patterns.Converters
     /// the conversion succeeded or failed.
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public class ConversionResult<TResult> : IValueProvider<TResult>
+    [Trackable]
+    public class ConversionResult<TResult> : IValueProvider<TResult?>
     {
         private ConversionResult(TResult? result, bool isSuccessful, string errorMessage = "")
         {

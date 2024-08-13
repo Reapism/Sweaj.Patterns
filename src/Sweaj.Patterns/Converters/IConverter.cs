@@ -1,4 +1,5 @@
-﻿using Sweaj.Patterns.Data.Values;
+﻿using Sweaj.Patterns.Attributes;
+using Sweaj.Patterns.Data.Values;
 using Sweaj.Patterns.Logging;
 
 namespace Sweaj.Patterns.Converters
@@ -8,6 +9,7 @@ namespace Sweaj.Patterns.Converters
     /// </summary>
     /// <typeparam name="TValue">The source value.</typeparam>
     /// <typeparam name="TReturn">The converted value.</typeparam>
+    [Trackable]
     public interface IConverter
     {
         ConversionResult<TReturn> Convert<TValue, TReturn>(TValue value);
@@ -18,6 +20,7 @@ namespace Sweaj.Patterns.Converters
     /// </summary>
     /// <typeparam name="TValue">The source value.</typeparam>
     /// <typeparam name="TReturn">The converted value.</typeparam>
+    [Trackable]
     public interface IConverter<TValue, TReturn>
     {
         ConversionResult<TReturn> Convert(TValue value);
@@ -29,6 +32,7 @@ namespace Sweaj.Patterns.Converters
     /// </summary>
     /// <typeparam name="TValue">The source value.</typeparam>
     /// <typeparam name="TReturn">The converted value.</typeparam>
+    [Trackable]
     public interface IAsyncConverter<TValue, TReturn> 
         where TValue : IValueProvider<TReturn>
     {
@@ -41,6 +45,7 @@ namespace Sweaj.Patterns.Converters
     /// </summary>
     /// <typeparam name="TValue">The source value.</typeparam>
     /// <typeparam name="TReturn">The converted value.</typeparam>
+    [Trackable]
     public interface IAsyncConverter
     {
         Task<ConversionResult<TReturn>> ConvertAsync<TValue, TReturn>(TValue value, CancellationToken cancellationToken = default);

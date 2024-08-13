@@ -1,5 +1,8 @@
-﻿namespace Sweaj.Patterns.Cache
+﻿using Sweaj.Patterns.Attributes;
+
+namespace Sweaj.Patterns.Cache
 {
+    [Trackable]
     public interface ICacheReadOnlyRequest
     {
         public Guid RequestId { get; }

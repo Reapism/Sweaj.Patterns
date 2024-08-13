@@ -1,4 +1,5 @@
-﻿using Sweaj.Patterns.Data.Entities;
+﻿using Sweaj.Patterns.Attributes;
+using Sweaj.Patterns.Data.Entities;
 
 namespace Sweaj.Patterns.Data.Repositories
 {
@@ -7,6 +8,7 @@ namespace Sweaj.Patterns.Data.Repositories
     /// <para>Using this as a dependency allows you to reuse
     /// this dependency and querying multiple T's.</para>
     /// </summary>
+    [Trackable]
     public interface IRepository : IReadOnlyRepository
     {
         /// <summary>
@@ -63,6 +65,7 @@ namespace Sweaj.Patterns.Data.Repositories
     /// <para>Using this as a dependency allows you to limit consumers to querying a specific <typeparamref name="TEntity"/>.</para>
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
+    [Trackable]
     public interface IRepository<TEntity> : IReadOnlyRepository<TEntity>
         where TEntity : Entity, IAggregateRoot
     {
@@ -105,6 +108,7 @@ namespace Sweaj.Patterns.Data.Repositories
     /// </summary>
     /// <typeparam name="TKey">The type of the entity's key.</typeparam>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
+    [Trackable]
     public interface IRepository<TKey, TEntity> : IReadOnlyRepository<TKey, TEntity>
         where TKey : IEquatable<TKey>, new()
         where TEntity : Entity<TKey>, IAggregateRoot

@@ -15,7 +15,6 @@ namespace Sweaj.Patterns.Serialization.Json
 
         public ValueTask<T> DeserializeAsync<T>(Stream value)
         {
-
             return JsonSerializer.DeserializeAsync<T>(value, JsonSerializerOptionsProvider.Web);
         }
 

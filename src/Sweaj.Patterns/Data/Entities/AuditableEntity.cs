@@ -1,5 +1,8 @@
-﻿namespace Sweaj.Patterns.Data.Entities
+﻿using Sweaj.Patterns.Attributes;
+
+namespace Sweaj.Patterns.Data.Entities
 {
+    [Trackable]
     internal interface IAuditableEntity
     {
         DateTimeOffset LastModifiedDate { get; }
@@ -8,6 +11,7 @@
         string CreatedByUser { get; }
     }
 
+    [Trackable]
     public abstract class AuditableEntity : Entity, IAuditableEntity
     {
         public DateTimeOffset LastModifiedDate { get; private set; }

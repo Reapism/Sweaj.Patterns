@@ -1,5 +1,11 @@
-﻿namespace Sweaj.Patterns.Exceptions
+﻿using Sweaj.Patterns.Attributes;
+
+namespace Sweaj.Patterns.Exceptions
 {
+    /// <summary>
+    /// A general exception generated from this library. This is used for tracking.
+    /// </summary>\
+    [Trackable]
     public class PatternsException : Exception
     {
         public PatternsException()

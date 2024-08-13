@@ -1,4 +1,6 @@
-﻿namespace Sweaj.Patterns.Mapping
+﻿using Sweaj.Patterns.Attributes;
+
+namespace Sweaj.Patterns.Mapping
 {
     /// <summary>
     /// This should be relied upon when doing a entity to value 
@@ -6,6 +8,7 @@
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <typeparam name="TDestination"></typeparam>
+    [Trackable]
     public interface IMapper<TSource, TDestination>
     {
         /// <summary>

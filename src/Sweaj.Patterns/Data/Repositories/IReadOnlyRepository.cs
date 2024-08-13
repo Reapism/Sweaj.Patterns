@@ -1,8 +1,10 @@
-﻿using Sweaj.Patterns.Data.Entities;
+﻿using Sweaj.Patterns.Attributes;
+using Sweaj.Patterns.Data.Entities;
 using System.Linq.Expressions;
 
 namespace Sweaj.Patterns.Data.Repositories
 {
+    [Trackable]
     public interface IReadOnlyRepository
     {
         Task<TEntity> GetByIdAsync<TKey, TEntity>(TKey id, CancellationToken cancellationToken)
@@ -22,6 +24,7 @@ namespace Sweaj.Patterns.Data.Repositories
             where TEntity : Entity<TKey>, IAggregateRoot;
     }
 
+    [Trackable]
     public interface IReadOnlyRepository<TEntity>
         where TEntity : Entity, IAggregateRoot
     {
@@ -31,6 +34,7 @@ namespace Sweaj.Patterns.Data.Repositories
         Task<List<TEntity>> ListAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
     }
 
+    [Trackable]
     public interface IReadOnlyRepository<TKey, TEntity>
         where TKey : IEquatable<TKey>, new()
         where TEntity : Entity<TKey>, IAggregateRoot

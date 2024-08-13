@@ -3,7 +3,7 @@
     /// <summary>
     /// An object that represents a fully constructed name that is validated upon creation .
     /// </summary>
-    public class FullName
+    public sealed class FullName
     {
         public string FirstName { get; }
         public string? MiddleName { get; }

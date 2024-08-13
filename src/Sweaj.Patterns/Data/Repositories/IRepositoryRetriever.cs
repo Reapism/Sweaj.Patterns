@@ -1,4 +1,5 @@
-﻿using Sweaj.Patterns.Data.Entities;
+﻿using Sweaj.Patterns.Attributes;
+using Sweaj.Patterns.Data.Entities;
 
 namespace Sweaj.Patterns.Data.Repositories
 {
@@ -6,6 +7,7 @@ namespace Sweaj.Patterns.Data.Repositories
     /// Provides a mechanism for retrieving a <see cref="IRepository"/>
     /// instance.
     /// </summary>
+    [Trackable]
     public interface IRepositoryRetriever
     {
         /// <summary>
@@ -20,6 +22,7 @@ namespace Sweaj.Patterns.Data.Repositories
     /// instance.
     /// </summary>
     /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
+    [Trackable]
     public interface IRepositoryRetriever<TEntity>
         where TEntity : Entity, IAggregateRoot
     {
@@ -36,6 +39,7 @@ namespace Sweaj.Patterns.Data.Repositories
     /// </summary>
     /// <typeparam name="TKey ">An entity in an underlying store.</typeparam>
     /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
+    [Trackable]
     public interface IRepositoryRetriever<TKey, TEntity>
         where TKey : IEquatable<TKey>, new()
         where TEntity : Entity<TKey>, IAggregateRoot
@@ -52,6 +56,7 @@ namespace Sweaj.Patterns.Data.Repositories
     /// instance.
     /// </summary>
     /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
+    [Trackable]
     public interface IReadOnlyRepositoryRetriever
     {
         /// <summary>
@@ -66,6 +71,7 @@ namespace Sweaj.Patterns.Data.Repositories
     /// instance.
     /// </summary>
     /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
+    [Trackable]
     public interface IReadOnlyRepositoryRetriever<TEntity>
         where TEntity : Entity, IAggregateRoot
     {
@@ -82,6 +88,7 @@ namespace Sweaj.Patterns.Data.Repositories
     /// </summary>
     /// <typeparam name="TKey ">An entity in an underlying store.</typeparam>
     /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
+    [Trackable]
     public interface IReadOnlyRepositoryRetriever<TKey, TEntity>
         where TKey : IEquatable<TKey>, new()
         where TEntity : Entity<TKey>, IAggregateRoot

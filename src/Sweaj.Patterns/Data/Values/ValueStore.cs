@@ -1,10 +1,17 @@
-﻿using Sweaj.Patterns.Cache;
+﻿using Sweaj.Patterns.Attributes;
+using Sweaj.Patterns.Cache;
 using Sweaj.Patterns.Data.Entities;
 using Sweaj.Patterns.Mapping;
 using Sweaj.Patterns.NullObject;
 
 namespace Sweaj.Patterns.Data.Values
 {
+    /// <summary>
+    /// Represents a <see cref="Value"/> encapsulated with information on how
+    /// the <see cref="Value"/> was retrieved.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    [Trackable]
     public sealed class ValueStore<TValue> : IValueProvider<TValue>, IEmpty
     {
         public TValue Value { get; }

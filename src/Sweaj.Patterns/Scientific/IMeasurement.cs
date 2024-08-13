@@ -1,8 +1,11 @@
-﻿namespace Sweaj.Patterns.Scientific
+﻿using Sweaj.Patterns.Attributes;
+using Sweaj.Patterns.Data.Values;
+
+namespace Sweaj.Patterns.Scientific
 {
-    public interface IMeasurement<TValue, TUnit>
+    [Trackable]
+    public interface IMeasurement<TValue, TUnit> : IValueProvider<TValue>
     {
-        TValue Value { get; set; }
         TUnit Unit { get; set; }
     }
 }

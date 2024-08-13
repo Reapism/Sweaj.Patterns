@@ -1,6 +1,6 @@
 ﻿namespace Sweaj.Patterns.Attributes
 {
-    [AttributeUsage(AttributeTargets.Interface, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class TrackableAttribute : Attribute
     {
     }

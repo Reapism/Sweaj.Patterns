@@ -1,7 +1,9 @@
-﻿using Sweaj.Patterns.Serialization.Json;
+﻿using Sweaj.Patterns.Attributes;
+using Sweaj.Patterns.Serialization.Json;
 
 namespace Sweaj.Patterns.Cache
 {
+    [Trackable]
     public abstract class CacheManagerBase
     {
         public abstract Task ProcessAsync<TValue>(CacheReadOnlyRequest cacheRequest, CancellationToken cancellationToken = default);

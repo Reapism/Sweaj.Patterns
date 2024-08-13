@@ -4,6 +4,9 @@ namespace Sweaj.Patterns.Data.ValueObjects
 {
     public sealed partial class Email
     {
+        [GeneratedRegex("^([\\w\\.\\-]+)@([\\w\\-]+)((\\.(\\w){2,3})+)$")]
+        private static partial Regex ValidateEmailRegex();
+
         private readonly string emailAddress;
 
         private Email(string email)
@@ -64,8 +67,5 @@ namespace Sweaj.Patterns.Data.ValueObjects
         {
             return this.emailAddress.GetHashCode();
         }
-
-        [GeneratedRegex("^([\\w\\.\\-]+)@([\\w\\-]+)((\\.(\\w){2,3})+)$")]
-        private static partial Regex ValidateEmailRegex();
     }
 }

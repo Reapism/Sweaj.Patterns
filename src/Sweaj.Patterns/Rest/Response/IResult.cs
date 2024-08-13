@@ -1,43 +1,40 @@
-﻿using Sweaj.Patterns.Data.Values;
+﻿using Sweaj.Patterns.Attributes;
+using Sweaj.Patterns.Data.Values;
 
 namespace Sweaj.Patterns.Rest.Response
 {
-    public interface IResult<TKey, TValue> : ICorrelationIdProvider<TKey>, IValueProvider<TValue>
-        where TKey : IEquatable<TKey>
+    [Trackable]
+    public interface IResult<TValue> : IValueProvider<TValue?>
     { }
 
-    public class Result<TValue> : IResult<Guid, TValue>
+    [Trackable]
+    public class Result<TValue> : IResult<TValue?>
     {
         /// <summary>
         /// Initializes a result instance using the default constructor from
         /// </summary>
-        protected Result(
-            [NotNull, ValidatedNotNull] Guid correlationId,
-            [NotNull, ValidatedNotNull] TValue value)
+        protected Result(TValue? value)
         {
-            CorrelationId = Guard.Against.Null(correlationId);
-            Value = Guard.Against.Null(value);
-
             ResultId = Guid.NewGuid();
+            Value = value;
         }
 
-        public static Result<TValue> Create(Guid correlationId, TValue value)
+        public static Result<TValue?> Create(TValue value)
         {
-            return new Result<TValue>(correlationId, value);
+            return new Result<TValue?>(value);
         }
 
-        public static Result<TValue> Create(Guid correlationId, IValueProvider<TValue> valueProvider)
+        public static Result<TValue?> Create(IValueProvider<TValue> valueProvider)
         {
-            return new Result<TValue>(correlationId, valueProvider.Value);
+            return new Result<TValue?>(valueProvider.Value);
         }
 
-        public static async Task<Result<TValue>> Create<TParams>(Guid correlationId, IValueFactory<TValue> valueFactory, TParams parameters, CancellationToken cancellationToken)
+        public static async Task<Result<TValue?>> Create<TParams>(IValueFactory<TValue> valueFactory, TParams parameters, in CancellationToken cancellationToken)
         {
-            return new Result<TValue>(correlationId, await valueFactory.CreateValueAsync(cancellationToken));
+            return new Result<TValue?>(await valueFactory.CreateValueAsync(cancellationToken));
         }
 
         public Guid ResultId { get; }
-        public Guid CorrelationId { get; }
-        public TValue Value { get; }
+        public TValue? Value { get; }
     }
 }
