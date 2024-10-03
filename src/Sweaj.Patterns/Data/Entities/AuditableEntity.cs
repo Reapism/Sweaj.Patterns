@@ -14,9 +14,9 @@ namespace Sweaj.Patterns.Data.Entities
     [Trackable]
     public abstract class AuditableEntity : Entity, IAuditableEntity
     {
-        public DateTimeOffset LastModifiedDate { get; private set; }
+        public DateTimeOffset LastModifiedDate { get; private set; } = DateTimeOffset.UtcNow;
         public string LastModifiedByUser { get; private set; } = string.Empty;
-        public DateTimeOffset CreatedDate { get; private set; }
+        public DateTimeOffset CreatedDate { get; private set; } = DateTimeOffset.UtcNow;
         public string CreatedByUser { get; private set; } = string.Empty;
 
         public void Audit(string modifyingUser)
