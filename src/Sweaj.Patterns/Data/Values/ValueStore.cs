@@ -44,13 +44,6 @@ namespace Sweaj.Patterns.Data.Values
             return new ValueStore<TEntity>(dataStore.Value, ValueResultStatus.DataStore);
         }
 
-        public static ValueStore<TValue> FromDataStore<TEntity>(IMapper<TEntity, TValue> mapper, DataStore<Guid, TEntity> dataStore)
-            where TEntity : Entity
-        {
-            var value = mapper.Convert(dataStore.Value);
-            return new ValueStore<TValue>(value, ValueResultStatus.DataStore);
-        }
-
         public bool IsEmpty()
         {
             return ValueResultStatus == ValueResultStatus.Empty;
