@@ -6,16 +6,16 @@ namespace Sweaj.Patterns.Mapping
     /// This should be relied upon when doing a entity to value 
     /// mapping as opposed to an abstraction created from another library.
     /// </summary>
-    /// <typeparam name="TSource"></typeparam>
-    /// <typeparam name="TDestination"></typeparam>
     [Trackable]
-    public interface IMapper<TSource, TDestination>
+    public interface IMapper
     {
         /// <summary>
-        /// The mechanism used to convert an entity into a value.
+        /// The mechanism used to convert an source value into a destination value.
         /// </summary>
-        /// <param name="entity"></param>
+        /// <typeparam name="TSource">The type to convert from.</typeparam>
+        /// <typeparam name="TDestination">The type to convert to.</typeparam>
+        /// <param name="source">The <typeparamref name="TSource"/> type used to construct a <typeparamref name="TDestination"/>.</param>
         /// <returns></returns>
-        TDestination Convert(TSource entity);
+        TDestination Convert<TSource, TDestination>(TSource source);
     }
 }

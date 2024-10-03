@@ -4,9 +4,9 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>1.2.0</Version>
-		<Title>Sweaj.Patterns</Title>
-		<Description></Description>
+		<Version>1.2.1</Version>
+		<Title>Sweaj.Patterns</Title> 
+		<Description>An opinionated patterns library that encapsulates many .NET patterns and provides a single, cohesive ecosystem for abstractions. The best part is some patterns reuse very primitive abstractions which allows for different patterns to interface with eachother without ever knowing the implementation details of each. For example, provided in the library Cache namespace, Data, all use IValueProvider which provides a common mechanism for a given value.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>patterns, software patterns library</PackageTags>
