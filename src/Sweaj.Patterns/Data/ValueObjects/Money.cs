@@ -112,7 +112,7 @@ namespace Sweaj.Patterns.Data.ValueObjects
 
         public override string ToString()
         {
-            var roundedValue = Math.Round(Value, DecimalPlaces);
+            var roundedValue = System.Math.Round(Value, DecimalPlaces);
             var format = "C" + DecimalPlaces;
             var culture = new CultureInfo(Currency);
             return roundedValue.ToString(format, culture);
