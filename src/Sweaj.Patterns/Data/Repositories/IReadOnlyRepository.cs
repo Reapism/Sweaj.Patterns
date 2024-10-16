@@ -7,6 +7,7 @@ namespace Sweaj.Patterns.Data.Repositories
     [Trackable]
     public interface IReadOnlyRepository
     {
+        IQueryable Query<TEntity>();
         Task<TEntity> GetByIdAsync<TKey, TEntity>(TKey id, CancellationToken cancellationToken)
             where TKey : IEquatable<TKey>, new()
             where TEntity : Entity<TKey>, IAggregateRoot;
@@ -28,6 +29,7 @@ namespace Sweaj.Patterns.Data.Repositories
     public interface IReadOnlyRepository<TEntity>
         where TEntity : Entity, IAggregateRoot
     {
+        IQueryable<TEntity> Query();
         Task<TEntity> GetByIdAsync(Guid id, CancellationToken cancellationToken);
         Task<TEntity> GetWhenAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
         Task<List<TEntity>> ListAsync(CancellationToken cancellationToken);
@@ -39,6 +41,7 @@ namespace Sweaj.Patterns.Data.Repositories
         where TKey : IEquatable<TKey>, new()
         where TEntity : Entity<TKey>, IAggregateRoot
     {
+        IQueryable<TEntity> Query();
         Task<TEntity> GetByIdAsync(TKey id, CancellationToken cancellationToken);
         Task<TEntity> GetWhenAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
         Task<List<TEntity>> ListAsync(CancellationToken cancellationToken);
