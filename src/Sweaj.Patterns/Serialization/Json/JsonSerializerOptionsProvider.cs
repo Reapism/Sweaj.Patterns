@@ -13,7 +13,17 @@ namespace Sweaj.Patterns.Serialization.Json
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
+
+        private static readonly JsonSerializerOptions WebWithOutputFormatting = new(DefaultInstance)
+        {
+            WriteIndented = true,
+        };
         public static JsonSerializerOptions Web => DefaultInstance;
+        /// <summary>
+        /// Same as <see cref="Web"/> but with writing the JSON indented. This is perfect for logging json objects.
+        /// </summary>
+        public static JsonSerializerOptions WebFormatted => DefaultInstance;
+
 
         public static JsonSerializerOptions WithConverters(this JsonSerializerOptions jsonSerializerOptions, IEnumerable<JsonConverter> jsonConverters)
         {
