@@ -49,7 +49,7 @@
             Guard.Against.NegativeOrZero(rowsPerPage);
             Guard.Against.OutOfRange(rowsPerPage, nameof(rowsPerPage), 0, totalRowCount);
 
-            var (totalPages, remainder) = Math.DivRem(totalRowCount, rowsPerPage);
+            var (totalPages, remainder) = System.Math.DivRem(totalRowCount, rowsPerPage);
             if (remainder > 0)
             {
                 totalPages++;

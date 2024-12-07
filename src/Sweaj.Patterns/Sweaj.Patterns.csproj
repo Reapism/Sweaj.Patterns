@@ -1,49 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<Version>1.2.5</Version>
-		<Title>Sweaj.Patterns</Title> 
-		<Description>An opinionated patterns library that encapsulates many .NET patterns and provides a single, cohesive ecosystem for abstractions. The best part is some patterns reuse very primitive abstractions which allows for different patterns to interface with eachother without ever knowing the implementation details of each. For example, provided in the library Cache namespace, Data, all use IValueProvider which provides a common mechanism for a given value.</Description>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryType>git</RepositoryType>
-		<PackageTags>patterns, software patterns library</PackageTags>
-		<IncludeSymbols>True</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-		<AnalysisLevel>latest</AnalysisLevel>
-		<PackageProjectUrl>https://github.com/Reapism/Sweaj.Patterns/wiki</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/Reapism/Sweaj.Patterns</RepositoryUrl>
-		<SourceGenerators>Sweaj.Patterns.Tests.ClassGenerator</SourceGenerators>
-		<PackageReleaseNotes>Update ApiResponse</PackageReleaseNotes>
-	</PropertyGroup>
-
-	<ItemGroup>
-	  <Compile Remove="Clients\**" />
-	  <Compile Remove="Initializer\**" />
-	  <Compile Remove="Ui\**" />
-	  <EmbeddedResource Remove="Clients\**" />
-	  <EmbeddedResource Remove="Initializer\**" />
-	  <EmbeddedResource Remove="Ui\**" />
-	  <None Remove="Clients\**" />
-	  <None Remove="Initializer\**" />
-	  <None Remove="Ui\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="..\..\README.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Ardalis.GuardClauses" Version="5.0.0" />
-		<PackageReference Include="JetBrains.Annotations" Version="2024.2.0" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
-	</ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>1.3.0</Version>
+    <Title>Sweaj.Patterns</Title>
+    <Description>An opinionated patterns library that encapsulates many .NET patterns and provides a single, cohesive ecosystem for abstractions. The best part is some patterns reuse very primitive abstractions which allows for different patterns to interface with eachother without ever knowing the implementation details of each. For example, provided in the library Cache namespace, Data, all use IValueProvider which provides a common mechanism for a given value.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>patterns, software patterns library</PackageTags>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <PackageProjectUrl>https://github.com/Reapism/Sweaj.Patterns/wiki</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Reapism/Sweaj.Patterns</RepositoryUrl>
+    <SourceGenerators>Sweaj.Patterns.Tests.ClassGenerator</SourceGenerators>
+    <PackageReleaseNotes>Update ApiResponse</PackageReleaseNotes>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Clients\**" />
+    <Compile Remove="Initializer\**" />
+    <Compile Remove="Ui\**" />
+    <EmbeddedResource Remove="Clients\**" />
+    <EmbeddedResource Remove="Initializer\**" />
+    <EmbeddedResource Remove="Ui\**" />
+    <None Remove="Clients\**" />
+    <None Remove="Initializer\**" />
+    <None Remove="Ui\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Ardalis.GuardClauses" Version="5.0.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2024.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+  </ItemGroup>
 </Project>

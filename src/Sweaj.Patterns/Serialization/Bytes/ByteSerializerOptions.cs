@@ -7,7 +7,7 @@
 
         }
 
-        private readonly static ByteSerializerOptions DefaultInstance = new ByteSerializerOptions()
+        private readonly static ByteSerializerOptions DefaultInstance = new()
         {
             CompressBytes = false
         };

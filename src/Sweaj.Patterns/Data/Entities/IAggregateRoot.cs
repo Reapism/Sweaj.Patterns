@@ -19,4 +19,14 @@ namespace Sweaj.Patterns.Data.Entities
     [Trackable]
     public interface IAggregateRoot
     { }
+
+    [Trackable]
+    public interface IPolymorphicEntity
+    {
+        /// <summary>
+        /// Add attributes to customize the name of the column - <see cref="Patterns"/> will automatically get the datas
+        /// </summary>
+        public string TargetTableName { get; set; }
+
+    }
 }

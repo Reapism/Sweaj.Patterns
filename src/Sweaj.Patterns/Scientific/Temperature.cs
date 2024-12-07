@@ -71,7 +71,7 @@ namespace Sweaj.Patterns.Scientific
 
         public Temperature AsPositive()
         {
-            return new Temperature(Math.Abs(Value), Unit);
+            return new Temperature(System.Math.Abs(Value), Unit);
         }
 
         public bool IsHotterThan(Temperature other)
