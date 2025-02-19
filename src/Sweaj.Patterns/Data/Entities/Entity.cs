@@ -4,6 +4,13 @@ using Sweaj.Patterns.NullObject;
 
 namespace Sweaj.Patterns.Data.Entities
 {
+    [Trackable]
+    public interface IKeyProvider<TKey>
+        where TKey : IEquatable<TKey>, new()
+    {
+        TKey Id { get; }
+    }
+
     /// <summary>
     /// A base entity with a <see cref="Guid"/> key type identifier and support for holding
     /// events.
@@ -22,7 +29,7 @@ namespace Sweaj.Patterns.Data.Entities
     /// events, and uses a generic key type.
     /// </summary>
     [Trackable]
-    public abstract class Entity<TKey> : IEmpty
+    public abstract class Entity<TKey> : IEmpty, IKeyProvider<TKey>
         where TKey : IEquatable<TKey>, new()
     {
         public TKey Id { get; protected set; } = new TKey();
