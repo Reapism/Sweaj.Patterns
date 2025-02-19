@@ -5,7 +5,7 @@ env:
   # The path to the project file to build and package
   PROJECT_FILE: src/Sweaj.Patterns/Sweaj.Patterns.csproj
   # The dotnet version to build and publish with
-  DOTNET_VERSION: 7.0.x
+  DOTNET_VERSION: 9.0.x
   # The build configuration to use (e.g. Debug or Release)
   BUILD_CONFIGURATION: Release
   # The directory to publish the package to
