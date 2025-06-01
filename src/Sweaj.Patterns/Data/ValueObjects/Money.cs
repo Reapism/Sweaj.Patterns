@@ -1,147 +1,184 @@
 ﻿using Sweaj.Patterns.Data.Values;
+using System;
 using System.Globalization;
 
 namespace Sweaj.Patterns.Data.ValueObjects
 {
+    /// <summary>
+    /// Represents a monetary value with currency and precision.
+    /// </summary>
+    /// <remarks>
+    /// This struct ensures value integrity, supports arithmetic and comparison operations,
+    /// and validates currency consistency where applicable.
+    /// </remarks>
     public readonly struct Money : IValueProvider<decimal>, IEquatable<Money>, IComparable<Money>, IComparer<Money>
     {
         private const string DefaultCurrency = "USD";
         private const int DefaultDecimalPlaces = 2;
+
+        /// <summary>
+        /// Gets the monetary amount.
+        /// </summary>
         public decimal Value { get; }
+
+        /// <summary>
+        /// Gets the ISO currency code.
+        /// </summary>
         public string Currency { get; }
+
+        /// <summary>
+        /// Gets the number of decimal places used for rounding and display.
+        /// </summary>
         public int DecimalPlaces { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Money"/> struct.
+        /// </summary>
+        /// <param name="value">The monetary value.</param>
+        /// <param name="currency">The ISO currency code.</param>
+        /// <param name="decimalPlaces">The number of decimal places.</param>
         public Money(decimal value, string currency, int decimalPlaces)
         {
             Value = Guard.Against.Negative(value);
-            Currency = currency;
-            DecimalPlaces = decimalPlaces;
+            Currency = currency ?? throw new ArgumentNullException(nameof(currency));
+            DecimalPlaces = decimalPlaces >= 0 ? decimalPlaces : throw new ArgumentOutOfRangeException(nameof(decimalPlaces));
         }
 
-        public static Money operator +(Money a, Money b)
-        {
-            if (a.Currency != b.Currency)
-            {
-                throw new ArgumentException("Cannot add money of different currencies.");
-            }
-            return new Money(a.Value + b.Value, a.Currency, a.DecimalPlaces);
-        }
+        #region Operators
 
-        public static Money operator -(Money a, Money b)
-        {
-            if (a.Currency != b.Currency)
-            {
-                throw new ArgumentException("Cannot subtract money of different currencies.");
-            }
-            if (a.Value < b.Value)
-            {
-                throw new ArgumentException("Resulting money value cannot be negative.");
-            }
-            return new Money(a.Value - b.Value, a.Currency, a.DecimalPlaces);
-        }
+        /// <summary>
+        /// Adds two <see cref="Money"/> instances with the same currency.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown if currencies differ.</exception>
+        public static Money operator +(Money a, Money b) => a.Add(b);
 
-        public static Money operator *(Money a, decimal b)
-        {
-            return new Money(a.Value * b, a.Currency, a.DecimalPlaces);
-        }
+        /// <summary>
+        /// Subtracts one <see cref="Money"/> instance from another with the same currency.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown if currencies differ.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if result is negative.</exception>
+        public static Money operator -(Money a, Money b) => a.Subtract(b);
 
+        /// <summary>
+        /// Multiplies a <see cref="Money"/> instance by a scalar.
+        /// </summary>
+        public static Money operator *(Money a, decimal b) => new Money(a.Value * b, a.Currency, a.DecimalPlaces);
+
+        /// <summary>
+        /// Divides a <see cref="Money"/> instance by a scalar.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown if divisor is zero.</exception>
         public static Money operator /(Money a, decimal b)
         {
             Guard.Against.Zero(b);
             return new Money(a.Value / b, a.Currency, a.DecimalPlaces);
         }
 
-        public static bool operator <(Money a, Money b)
-        {
-            ValidateCurrency(a, b);
-            return a.Value < b.Value;
-        }
+        /// <summary>
+        /// Determines whether one <see cref="Money"/> is less than another.
+        /// </summary>
+        public static bool operator <(Money a, Money b) => a.CompareTo(b) < 0;
 
-        public static bool operator >(Money a, Money b)
-        {
-            ValidateCurrency(a, b);
-            return a.Value > b.Value;
-        }
+        /// <summary>
+        /// Determines whether one <see cref="Money"/> is greater than another.
+        /// </summary>
+        public static bool operator >(Money a, Money b) => a.CompareTo(b) > 0;
 
-        public static bool operator <=(Money a, Money b)
-        {
-            ValidateCurrency(a, b);
-            return a.Value <= b.Value;
-        }
+        /// <summary>
+        /// Determines whether one <see cref="Money"/> is less than or equal to another.
+        /// </summary>
+        public static bool operator <=(Money a, Money b) => a.CompareTo(b) <= 0;
 
-        public static bool operator >=(Money a, Money b)
-        {
-            ValidateCurrency(a, b);
-            return a.Value >= b.Value;
-        }
+        /// <summary>
+        /// Determines whether one <see cref="Money"/> is greater than or equal to another.
+        /// </summary>
+        public static bool operator >=(Money a, Money b) => a.CompareTo(b) >= 0;
 
-        public static bool operator ==(Money a, Money b)
-        {
-            ValidateCurrency(a, b);
+        /// <summary>
+        /// Determines whether two <see cref="Money"/> instances are equal.
+        /// </summary>
+        public static bool operator ==(Money a, Money b) => a.Equals(b);
 
-            return a.Value == b.Value;
-        }
-        public static bool operator !=(Money a, Money b)
-        {
-            ValidateCurrency(a, b);
-            return a.Value != b.Value;
-        }
+        /// <summary>
+        /// Determines whether two <see cref="Money"/> instances are not equal.
+        /// </summary>
+        public static bool operator !=(Money a, Money b) => !a.Equals(b);
 
-        public static implicit operator decimal(Money money)
-        {
-            return money.Value;
-        }
+        /// <summary>
+        /// Implicitly converts a <see cref="Money"/> instance to its <see cref="decimal"/> value.
+        /// </summary>
+        public static implicit operator decimal(Money money) => money.Value;
 
-        public static implicit operator Money(decimal value)
-        {
-            return new Money(value, DefaultCurrency, DefaultDecimalPlaces);
-        }
+        /// <summary>
+        /// Implicitly converts a <see cref="decimal"/> value to a <see cref="Money"/> instance with default currency and precision.
+        /// </summary>
+        public static implicit operator Money(decimal value) => new Money(value, DefaultCurrency, DefaultDecimalPlaces);
+
+        #endregion
+
+        #region Methods
 
         private static void ValidateCurrency(Money a, Money b)
         {
-            if (a.Currency != b.Currency)
+            if (!string.Equals(a.Currency, b.Currency, StringComparison.OrdinalIgnoreCase))
             {
-                throw new ArgumentException("Cannot compare money of different currencies.");
+                throw new ArgumentException("Cannot operate on money with different currencies.");
             }
         }
 
-        public override int GetHashCode()
+        /// <summary>
+        /// Adds another money value to the current instance.
+        /// </summary>
+        public Money Add(Money other)
         {
-            return HashCode.Combine(Value, Currency, DecimalPlaces);
+            ValidateCurrency(this, other);
+            return new Money(Value + other.Value, Currency, DecimalPlaces);
         }
 
-        public override string ToString()
+        /// <summary>
+        /// Subtracts another money value from the current instance.
+        /// </summary>
+        public Money Subtract(Money other)
         {
-            var roundedValue = System.Math.Round(Value, DecimalPlaces);
-            var format = "N" + DecimalPlaces;
-            var culture = new CultureInfo(Currency);
-            return roundedValue.ToString(format, culture);
+            ValidateCurrency(this, other);
+            var result = Value - other.Value;
+            if (result < 0) throw new InvalidOperationException("Resulting money cannot be negative.");
+            return new Money(result, Currency, DecimalPlaces);
         }
 
-        public bool Equals(Money other)
-        {
-            return Value == other.Value
-                && Currency == other.Currency
-                && DecimalPlaces == other.DecimalPlaces;
-        }
+        /// <inheritdoc/>
+        public override int GetHashCode() => HashCode.Combine(Value, Currency.ToUpperInvariant(), DecimalPlaces);
 
-        public int Compare(Money x, Money y)
-        {
-            if (x.Value > y.Value) return 1;
-            if (x.Value < y.Value) return -1;
-            return 0;
-        }
+        /// <inheritdoc/>
+        public override bool Equals(object obj) => obj is Money other && Equals(other);
 
+        /// <inheritdoc/>
+        public bool Equals(Money other) => Value == other.Value &&
+                                           string.Equals(Currency, other.Currency, StringComparison.OrdinalIgnoreCase) &&
+                                           DecimalPlaces == other.DecimalPlaces;
+
+        /// <inheritdoc/>
         public int CompareTo(Money other)
         {
-            if (Value > other.Value) return 1;
-            if (Value < other.Value) return -1;
-            return 0;
+            ValidateCurrency(this, other);
+            return Value.CompareTo(other.Value);
         }
 
-        public override bool Equals(object obj)
+        /// <inheritdoc/>
+        public int Compare(Money x, Money y)
         {
-            return obj is Money && Equals((Money)obj);
+            ValidateCurrency(x, y);
+            return x.Value.CompareTo(y.Value);
         }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            var rounded = System.Math.Round(Value, DecimalPlaces);
+            var format = "N" + DecimalPlaces;
+            return string.Format(CultureInfo.InvariantCulture, "{0} {1}", Currency, rounded.ToString(format));
+        }
+
+        #endregion
     }
 }
