@@ -1,4 +1,6 @@
-﻿namespace Sweaj.Patterns.Math;
+﻿using System.Numerics;
+
+namespace Sweaj.Patterns.Math;
 
 /// <summary>
 /// A set of extended mathematical formulas for common analytical computations such as percentage calculations, growth ratios, and comparative differences.
@@ -8,9 +10,96 @@
 /// </remarks>
 public static class MathEx
 {
+    /// <summary>
+    /// Provides algebraic utility methods.
+    /// </summary>
     public static class Algebra
     {
+        /// <summary>
+        /// Calculates the factorial of a non-negative integer.
+        /// </summary>
+        /// <param name="n">The non-negative integer.</param>
+        /// <returns>The factorial of <paramref name="n"/> as a <see cref="BigInteger"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="n"/> is negative.
+        /// </exception>
+        /// <remarks>
+        /// This method uses recursion and returns the result as a <see cref="BigInteger"/> to prevent overflow.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// BigInteger result = Algebra.Factorial(5); // result is 120
+        /// </code>
+        /// </example>
+        public static BigInteger Factorial(int n)
+        {
+            if (n < 0)
+                throw new ArgumentOutOfRangeException(nameof(n), "Input must be non-negative.");
 
+            return n <= 1 ? BigInteger.One : n * Factorial(n - 1);
+        }
+
+        /// <summary>
+        /// Calculates the factorial of a non-negative <see cref="BigInteger"/> value.
+        /// </summary>
+        /// <param name="n">The non-negative <see cref="BigInteger"/>.</param>
+        /// <returns>The factorial of <paramref name="n"/> as a <see cref="BigInteger"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="n"/> is negative.
+        /// </exception>
+        /// <remarks>
+        /// This method uses recursion and supports arbitrarily large values of <paramref name="n"/>.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// BigInteger result = Algebra.FactorialBig(BigInteger.Parse("30"));
+        /// // result is 265252859812191058636308480000000
+        /// </code>
+        /// </example>
+        public static BigInteger FactorialBig(BigInteger n)
+        {
+            if (n < 0)
+                throw new ArgumentOutOfRangeException(nameof(n), "Input must be non-negative.");
+
+            return n <= 1 ? BigInteger.One : n * FactorialBig(n - 1);
+        }
+
+        /// <summary>
+        /// Evaluates the Fast Growing Hierarchy function F_index(input).
+        /// </summary>
+        /// <param name="index">The level of the hierarchy.</param>
+        /// <param name="input">The input value.</param>
+        /// <returns>The result of the FGH function as a <see cref="BigInteger"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="index"/> or <paramref name="input"/> is negative.
+        /// </exception>
+        /// <remarks>
+        /// This method defines the fast-growing hierarchy using the recurrence:
+        /// F_0(input) = input + 1
+        /// F_{index+1}(input) = F_index^input(input)
+        /// Be cautious with large values, as growth is extremely rapid.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// BigInteger result = Algebra.FastGrowingFunction(1, 3); // result is 6
+        /// </code>
+        /// </example>
+        public static BigInteger FastGrowingFunction(int index, BigInteger input)
+        {
+            if (index < 0 || input < 0)
+                throw new ArgumentOutOfRangeException("Both index and input must be non-negative.");
+
+            if (index == 0)
+                return input + 1;
+
+            BigInteger result = input;
+            for (BigInteger i = 0; i < input; i++)
+            {
+                result = FastGrowingFunction(index - 1, result);
+            }
+
+            return result;
+        }
     }
     /// <summary>
     /// Provides geometric calculations such as area and perimeter for basic shapes.
