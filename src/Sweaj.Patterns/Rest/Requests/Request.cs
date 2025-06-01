@@ -1,64 +1,37 @@
 ﻿using Sweaj.Patterns.Attributes;
-using Sweaj.Patterns.Data.Values;
 
 namespace Sweaj.Patterns.Rest.Requests
 {
-    /// <summary>
-    /// Represents a request with some payload and a cancellation token.
-    /// </summary>
-    /// <typeparam name="TValue"></typeparam>
-    [Trackable]
-    public interface IRequest<TValue> : IValueProvider<TValue>         
-    {
-        CancellationToken CancellationToken { get; }
-    }
 
     /// <summary>
-    /// Represents a request with a payload, and a cancellation token.
+    /// Provides a base implementation of <see cref="IRequest{TValue}"/>, including a payload and cancellation token.
     /// </summary>
-    /// <typeparam name="TValue"></typeparam>
+    /// <typeparam name="TValue">The type of the request payload.</typeparam>
     [Trackable]
     public abstract class Request<TValue> : IRequest<TValue?>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Request{TValue}"/> class.
+        /// </summary>
+        /// <param name="value">The payload of the request.</param>
+        /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <c>null</c>.</exception>
         protected Request([NotNull, ValidatedNotNull] TValue? value, in CancellationToken cancellationToken)
         {
             RequestId = Guid.NewGuid();
             Value = Guard.Against.Null(value);
             CancellationToken = cancellationToken;
         }
+
         /// <summary>
-        /// The unique ID of this request.
+        /// Gets the unique identifier for this request.
         /// </summary>
         public Guid RequestId { get; }
-        /// <summary>
-        /// The payload of the request.
-        /// </summary>
+
+        /// <inheritdoc/>
         public TValue? Value { get; }
-        /// <summary>
-        /// A cancellation token for this request should it be cancelled.
-        /// </summary>
+
+        /// <inheritdoc/>
         public CancellationToken CancellationToken { get; }
-    }
-
-    /// <summary>
-    /// Represents a generic Api Request with a payload, correlation ID, and a cancellation token
-    /// </summary>
-    /// <typeparam name="TValue"></typeparam>
-    [Trackable]
-    public abstract class ApiRequest<TValue> : Request<TValue>, ICorrelationIdProvider<Guid>
-    {
-        protected ApiRequest(in Guid correlationId, [NotNull, ValidatedNotNull] TValue? value, in CancellationToken cancellationToken)
-            : base(value, cancellationToken)
-        {
-            CorrelationId = correlationId;
-        }
-
-        protected ApiRequest([NotNull, ValidatedNotNull] TValue? value, in CancellationToken cancellationToken)
-            : base(value, cancellationToken)
-        {
-            CorrelationId = Guid.NewGuid();
-        }
-
-        public Guid CorrelationId { get; }
     }
 }

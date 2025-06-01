@@ -2,16 +2,22 @@
 
 namespace Sweaj.Patterns.Rest.Response
 {
+    /// <summary>
+    /// Represents a structured API response that includes a result value, HTTP status code, correlation ID, and messages.
+    /// </summary>
+    /// <typeparam name="TValue">The type of the response payload.</typeparam>
     [Trackable]
-    public sealed class ApiResponse<TValue> : Result<TValue?>, ICorrelationIdProvider<Guid>
+    public class ApiResponse<TValue> : Result<TValue?>, ICorrelationIdProvider<Guid>
     {
-        protected const string InvalidHttpCodeErrorMessage = "The given http status code is invalid based on the rfc9110 standard.";
+        /// <summary>
+        /// Default error message used when an HTTP status code is invalid according to RFC 9110.
+        /// </summary>
+        public const string InvalidHttpCodeErrorMessage = "The given http status code is invalid based on the rfc9110 standard.";
+
+        /// <summary>
+        /// Default message used when the status code is 200 (OK).
+        /// </summary>
         protected const string OkMessage = nameof(Ok);
-        protected const string CreatedMessage = nameof(Created);
-        protected const string AcceptedMessage = nameof(Accepted);
-        protected const string BadRequestMessage = nameof(BadRequest);
-        protected const string UnauthorizedMessage = nameof(Unauthorized);
-        protected const string NotFoundMessage = nameof(NotFound);
 
         private ApiResponse(in Guid correlationId, TValue value, string message, int httpStatusCode)
             : base(value)
@@ -21,78 +27,112 @@ namespace Sweaj.Patterns.Rest.Response
             InternalMessage = trimmedMessage;
             HttpStatusCode = httpStatusCode;
         }
+
+        /// <summary>
+        /// Gets the correlation ID associated with this response.
+        /// </summary>
         public Guid CorrelationId { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the HTTP status code indicates a successful response.
+        /// </summary>
         public bool IsSuccessful => IsSuccessStatusCode(HttpStatusCode);
+
+        /// <summary>
+        /// Gets a value indicating whether the HTTP status code indicates a server-side error.
+        /// </summary>
         public bool IsExceptional => IsServerErrorStatusCode(HttpStatusCode);
+
+        /// <summary>
+        /// Gets the HTTP status code associated with the response.
+        /// </summary>
         public int HttpStatusCode { get; }
 
-        public bool HasMessage { get => !string.IsNullOrEmpty(InternalMessage); }
+        /// <summary>
+        /// Gets a value indicating whether a non-empty internal message exists.
+        /// </summary>
+        public bool HasMessage => !string.IsNullOrEmpty(InternalMessage);
+
+        /// <summary>
+        /// Gets the raw internal message.
+        /// </summary>
         protected string InternalMessage { get; }
+
+        /// <summary>
+        /// Gets the user-facing API message if it is not a JSON object.
+        /// </summary>
         public string ApiMessage => !IsJsonMessage(InternalMessage[0]) ? InternalMessage : string.Empty;
+
+        /// <summary>
+        /// Gets the internal JSON message if present.
+        /// </summary>
         public string JsonMessage => IsJsonMessage(InternalMessage[0]) ? InternalMessage : string.Empty;
 
-
+        /// <summary>
+        /// Creates a new <see cref="ApiResponse{TValue}"/> from the provided values.
+        /// </summary>
+        /// <param name="correlationId">The correlation ID for the response.</param>
+        /// <param name="value">The payload value.</param>
+        /// <param name="message">The message string (can be plain text or JSON).</param>
+        /// <param name="httpStatusCode">The HTTP status code (must be 100–599).</param>
+        /// <returns>An <see cref="ApiResponse{TValue}"/> instance.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if the status code is not valid per RFC 9110.</exception>
         public static ApiResponse<TValue> From(Guid correlationId, TValue? value, string message, int httpStatusCode)
         {
             if (httpStatusCode == 200)
             {
                 return Ok(correlationId, value, message);
             }
-            return new ApiResponse<TValue>(correlationId, value, message, Guard.Against.AgainstExpression(e => IsHttpStatusCode(e), httpStatusCode, InvalidHttpCodeErrorMessage));
+            return new ApiResponse<TValue>(
+                correlationId,
+                value,
+                message,
+                Guard.Against.Expression(e => !IsHttpStatusCode(e), httpStatusCode, InvalidHttpCodeErrorMessage, exceptionCreator: () => throw new ArgumentOutOfRangeException(InvalidHttpCodeErrorMessage))
+            );
         }
+
+        /// <summary>
+        /// Creates a 200 OK <see cref="ApiResponse{TValue}"/> instance.
+        /// </summary>
+        /// <param name="correlationId">The correlation ID for tracking the response.</param>
+        /// <param name="value">The optional response value.</param>
+        /// <param name="message">The message to include. Defaults to \"Ok\".</param>
+        /// <returns>An <see cref="ApiResponse{TValue}"/> with status code 200.</returns>
         public static ApiResponse<TValue> Ok(Guid correlationId, TValue value = default, string message = OkMessage)
         {
             return new ApiResponse<TValue>(correlationId, value, message, 200);
         }
 
-        public static ApiResponse<TValue> Created(Guid correlationId, TValue? value = default, string message = CreatedMessage)
-        {
-            return new ApiResponse<TValue>(correlationId, value, message, 201);
-        } 
+        /// <summary>
+        /// Determines whether the given status code is within the valid HTTP status code range (100–599).
+        /// </summary>
+        public static bool IsHttpStatusCode(int httpStatusCode) =>
+            httpStatusCode is >= 100 and <= 599;
 
-        public static ApiResponse<TValue> Accepted(Guid correlationId, TValue? value = default, string message = AcceptedMessage)
-        {
-            return new ApiResponse<TValue>(correlationId, value, message, 202);
-        }
+        /// <summary>
+        /// Determines whether the status code represents a successful response (200–299).
+        /// </summary>
+        public static bool IsSuccessStatusCode(int httpStatusCode) =>
+            httpStatusCode is >= 200 and <= 299;
 
-        public static ApiResponse<TValue> BadRequest(Guid correlationId, TValue? value = default, string message = BadRequestMessage)
-        {
-            return new ApiResponse<TValue>(correlationId, value, message, 400);
-        }
+        /// <summary>
+        /// Determines whether the status code represents a client error (400–499).
+        /// </summary>
+        public static bool IsClientErrorStatusCode(int httpStatusCode) =>
+            httpStatusCode is >= 400 and <= 499;
 
-        public static ApiResponse<TValue> Unauthorized(Guid correlationId, TValue? value = default, string message = UnauthorizedMessage)
-        {
-            return new ApiResponse<TValue>(correlationId, value, message, 401);
-        }
+        /// <summary>
+        /// Determines whether the status code represents a server error (500–599).
+        /// </summary>
+        public static bool IsServerErrorStatusCode(int httpStatusCode) =>
+            httpStatusCode is >= 500 and <= 599;
 
-        public static ApiResponse<TValue> NotFound(Guid correlationId, TValue? value = default, string message = NotFoundMessage)
-        {
-            return new ApiResponse<TValue>(correlationId, value, message, 404);
-        }
-
-        public static bool IsHttpStatusCode(int httpStatusCode)
-        {
-            return httpStatusCode is >= 100 and <= 599;
-        }
-
-        public static bool IsSuccessStatusCode(int httpStatusCode)
-        {
-            return httpStatusCode is >= 200 and <= 299;
-        }
-
-        public static bool IsClientErrorStatusCode(int httpStatusCode)
-        {
-            return httpStatusCode is >= 400 and <= 499;
-        }
-
-        public static bool IsServerErrorStatusCode(int httpStatusCode)
-        {
-            return httpStatusCode is >= 500 and <= 599;
-        }
-
-        public static bool IsJsonMessage(char firstInternalMessageCharacter)
-        {
-            return firstInternalMessageCharacter is '{' or '[';
-        }
+        /// <summary>
+        /// Determines whether the provided character indicates the start of a JSON message.
+        /// </summary>
+        /// <param name="firstInternalMessageCharacter">The first character of the internal message.</param>
+        /// <returns><c>true</c> if the character indicates JSON; otherwise, <c>false</c>.</returns>
+        public static bool IsJsonMessage(char firstInternalMessageCharacter) =>
+            firstInternalMessageCharacter is '{' or '[';
     }
 }
