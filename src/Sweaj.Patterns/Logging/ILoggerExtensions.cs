@@ -5,9 +5,9 @@
         private const string Trace = "TRC";
         private const string Info = "INF";
         private const string Debug = "DBG";
-        private const string Warning = "WAR";
+        private const string Warning = "WRN";
         private const string Error = "ERR";
-        private const string Fatal = "FAT";
+        private const string Fatal = "FTL";
 
         /// <summary>
         /// Logs a trace message.
