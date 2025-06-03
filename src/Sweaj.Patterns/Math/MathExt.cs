@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using Ardalis.GuardClauses;
+using System.Numerics;
 
 namespace Sweaj.Patterns.Math;
 
@@ -8,8 +9,12 @@ namespace Sweaj.Patterns.Math;
 /// <remarks>
 /// This static class provides utilities typically needed in data analysis, financial calculations, and error estimation.
 /// </remarks>
-public static class MathEx
+public static class MathExt
 {
+    public static class NumberTheory
+    {
+
+    }
     /// <summary>
     /// Provides algebraic utility methods.
     /// </summary>
@@ -75,8 +80,15 @@ public static class MathEx
         /// </exception>
         /// <remarks>
         /// This method defines the fast-growing hierarchy using the recurrence:
+        /// 
+        /// f₀(n) = n + 1
+        /// f_{α+1}(n) = f_α^n(n) (i.e., applying f_α to n, n times)
+        /// f_α(n) = f_{α[n]}(n) if α is a limit ordinal
+        /// 
+        /// This implementation assumes a finite ordinal index and models the hierarchy recursively:
         /// F_0(input) = input + 1
         /// F_{index+1}(input) = F_index^input(input)
+        /// 
         /// Be cautious with large values, as growth is extremely rapid.
         /// </remarks>
         /// <example>
@@ -108,33 +120,102 @@ public static class MathEx
     {
         /// <summary>
         /// Calculates the area of a rectangle.
-        /// <para>Formula: <c>length × width</c></para>
         /// </summary>
-        public static double AreaOfRectangle(double length, double width) => length * width;
+        /// <param name="length">The non-negative length of the rectangle.</param>
+        /// <param name="width">The non-negative width of the rectangle.</param>
+        /// <returns>The area as a <see cref="double"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="length"/> or <paramref name="width"/> is negative.
+        /// </exception>
+        /// <remarks>
+        /// Formula: <c>length × width</c>
+        /// </remarks>
+        public static double AreaOfRectangle(double length, double width)
+        {
+            if (length < 0 || width < 0)
+                throw new ArgumentOutOfRangeException("Dimensions must be non-negative.");
+
+            return length * width;
+        }
+
 
         /// <summary>
         /// Calculates the perimeter of a rectangle.
-        /// <para>Formula: <c>2 × (length + width)</c></para>
         /// </summary>
-        public static double PerimeterOfRectangle(double length, double width) => 2 * (length + width);
+        /// <param name="length">The non-negative length of the rectangle.</param>
+        /// <param name="width">The non-negative width of the rectangle.</param>
+        /// <returns>The perimeter as a <see cref="double"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="length"/> or <paramref name="width"/> is negative.
+        /// </exception>
+        /// <remarks>
+        /// Formula: <c>2 × (length + width)</c>
+        /// </remarks>
+        public static double PerimeterOfRectangle(double length, double width)
+        {
+            if (length < 0 || width < 0)
+                throw new ArgumentOutOfRangeException("Dimensions must be non-negative.");
+
+            return 2 * (length + width);
+        }
 
         /// <summary>
         /// Calculates the area of a circle.
-        /// <para>Formula: <c>π × radius²</c></para>
         /// </summary>
-        public static double AreaOfCircle(double radius) => System.Math.PI * radius * radius;
+        /// <param name="radius">The non-negative radius of the circle.</param>
+        /// <returns>The area as a <see cref="double"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="radius"/> is negative.
+        /// </exception>
+        /// <remarks>
+        /// Formula: <c>π × radius²</c>
+        /// </remarks>
+        public static double AreaOfCircle(double radius)
+        {
+            if (radius < 0)
+                throw new ArgumentOutOfRangeException("Radius must be non-negative.");
+
+            return System.Math.PI * radius * radius;
+        }
 
         /// <summary>
         /// Calculates the circumference (perimeter) of a circle.
-        /// <para>Formula: <c>2 × π × radius</c></para>
         /// </summary>
-        public static double CircumferenceOfCircle(double radius) => 2 * System.Math.PI * radius;
+        /// <param name="radius">The non-negative radius of the circle.</param>
+        /// <returns>The circumference as a <see cref="double"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="radius"/> is negative.
+        /// </exception>
+        /// <remarks>
+        /// Formula: <c>2 × π × radius</c>
+        /// </remarks>
+        public static double CircumferenceOfCircle(double radius)
+        {
+            if (radius < 0)
+                throw new ArgumentOutOfRangeException("Radius must be non-negative.");
+
+            return 2 * System.Math.PI * radius;
+        }
 
         /// <summary>
         /// Calculates the area of a triangle given its base and height.
-        /// <para>Formula: <c>½ × base × height</c></para>
         /// </summary>
-        public static double AreaOfTriangle(double baseLength, double height) => 0.5 * baseLength * height;
+        /// <param name="baseLength">The non-negative base of the triangle.</param>
+        /// <param name="height">The non-negative height of the triangle.</param>
+        /// <returns>The area as a <see cref="double"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="baseLength"/> or <paramref name="height"/> is negative.
+        /// </exception>
+        /// <remarks>
+        /// Formula: <c>½ × base × height</c>
+        /// </remarks>
+        public static double AreaOfTriangle(double baseLength, double height)
+        {
+            if (baseLength < 0 || height < 0)
+                throw new ArgumentOutOfRangeException("Base and height must be non-negative.");
+
+            return 0.5 * baseLength * height;
+        }
     }
 
     /// <summary>
@@ -238,79 +319,81 @@ public static class MathEx
         {
             return System.Math.Sqrt(Variance(data));
         }
-    }
 
-    /// <summary>
-    /// Calculates the percentage increase from a starting value to a final value.
-    /// </summary>
-    /// <param name="startValue">The initial value.</param>
-    /// <param name="finalValue">The final value after increase.</param>
-    /// <returns>The percentage increase from <paramref name="startValue"/> to <paramref name="finalValue"/>.</returns>
-    /// <example>
-    /// double result = MathEx.PercentIncrease(100, 150); // Returns 50.0
-    /// </example>
-    public static double PercentIncrease(double startValue, double finalValue)
-    {
-        var difference = finalValue - startValue;
-        var percent = (difference / System.Math.Abs(startValue)) * 100;
-        return percent;
-    }
+        /// <summary>
+        /// Calculates the percentage increase from a starting value to a final value.
+        /// </summary>
+        /// <param name="startValue">The initial value.</param>
+        /// <param name="finalValue">The final value after increase.</param>
+        /// <returns>The percentage increase from <paramref name="startValue"/> to <paramref name="finalValue"/>.</returns>
+        /// <example>
+        /// double result = MathEx.PercentIncrease(100, 150); // Returns 50.0
+        /// </example>
+        public static double PercentIncrease(double startValue, double finalValue)
+        {
+            Guard.Against.Zero(startValue, exceptionCreator: () => throw new DivideByZeroException("The input cannot be zero."));
+            var difference = finalValue - startValue;
+            var percent = (difference / System.Math.Abs(startValue)) * 100;
+            return percent;
+        }
 
-    /// <summary>
-    /// Calculates the percent error between an experimental and a theoretical value.
-    /// </summary>
-    /// <param name="experimental">The experimentally observed or measured value.</param>
-    /// <param name="theoretical">The theoretically expected or true value.</param>
-    /// <returns>The percent error as a positive value.</returns>
-    /// <example>
-    /// double result = MathEx.PercentError(98, 100); // Returns 2.0
-    /// </example>
-    public static double PercentError(double experimental, double theoretical)
-    {
-        var difference = System.Math.Abs((experimental - theoretical) / theoretical);
-        var percentError = difference * 100;
-        return percentError;
-    }
+        /// <summary>
+        /// Calculates the percent error between an experimental and a theoretical value.
+        /// </summary>
+        /// <param name="experimental">The experimentally observed or measured value.</param>
+        /// <param name="theoretical">The theoretically expected or true value.</param>
+        /// <returns>The percent error as a positive value.</returns>
+        /// <example>
+        /// double result = MathEx.PercentError(98, 100); // Returns 2.0
+        /// </example>
+        public static double PercentError(double experimental, double theoretical)
+        {
+            Guard.Against.Zero(theoretical, exceptionCreator: () => throw new DivideByZeroException("The input cannot be zero."));
+            var difference = System.Math.Abs((experimental - theoretical) / theoretical);
+            var percentError = difference * 100;
+            return percentError;
+        }
 
-    /// <summary>
-    /// Calculates the percentage change between two values.
-    /// </summary>
-    /// <param name="originalValue">The original value.</param>
-    /// <param name="newValue">The new value.</param>
-    /// <returns>The percentage change from <paramref name="originalValue"/> to <paramref name="newValue"/>.</returns>
-    /// <example>
-    /// double result = MathEx.PercentChange(80, 100); // Returns 25.0
-    /// </example>
-    public static double PercentChange(double originalValue, double newValue)
-    {
-        return ((newValue - originalValue) / System.Math.Abs(originalValue)) * 100;
-    }
+        /// <summary>
+        /// Calculates the percentage change between two values.
+        /// </summary>
+        /// <param name="originalValue">The original value.</param>
+        /// <param name="newValue">The new value.</param>
+        /// <returns>The percentage change from <paramref name="originalValue"/> to <paramref name="newValue"/>.</returns>
+        /// <example>
+        /// double result = MathEx.PercentChange(80, 100); // Returns 25.0
+        /// </example>
+        public static double PercentChange(double originalValue, double newValue)
+        {
+            return ((newValue - originalValue) / System.Math.Abs(Guard.Against.Zero(originalValue, exceptionCreator: () => throw new DivideByZeroException("The input cannot be zero.")))) * 100;
+        }
 
-    /// <summary>
-    /// Calculates the ratio between two values.
-    /// </summary>
-    /// <param name="part">The part value.</param>
-    /// <param name="whole">The whole value.</param>
-    /// <returns>The ratio as a value between 0 and 1.</returns>
-    /// <example>
-    /// double result = MathEx.Ratio(2, 5); // Returns 0.4
-    /// </example>
-    public static double Ratio(double part, double whole)
-    {
-        return whole == 0 ? 0 : part / whole;
-    }
+        /// <summary>
+        /// Calculates the ratio between two values.
+        /// </summary>
+        /// <param name="part">The part value.</param>
+        /// <param name="whole">The whole value.</param>
+        /// <returns>The ratio as a value between 0 and 1.</returns>
+        /// <example>
+        /// double result = MathEx.Ratio(2, 5); // Returns 0.4
+        /// </example>
+        public static double Ratio(double part, double whole)
+        {
+            return whole == 0 ? 0 : part / whole;
+        }
 
-    /// <summary>
-    /// Calculates the absolute difference between two numbers.
-    /// </summary>
-    /// <param name="value1">First number.</param>
-    /// <param name="value2">Second number.</param>
-    /// <returns>The absolute difference.</returns>
-    /// <example>
-    /// double result = MathEx.AbsoluteDifference(10, 6); // Returns 4.0
-    /// </example>
-    public static double AbsoluteDifference(double value1, double value2)
-    {
-        return System.Math.Abs(value1 - value2);
+        /// <summary>
+        /// Calculates the absolute difference between two numbers.
+        /// </summary>
+        /// <param name="value1">First number.</param>
+        /// <param name="value2">Second number.</param>
+        /// <returns>The absolute difference.</returns>
+        /// <example>
+        /// double result = MathEx.AbsoluteDifference(10, 6); // Returns 4.0
+        /// </example>
+        public static double AbsoluteDifference(double value1, double value2)
+        {
+            return System.Math.Abs(value1 - value2);
+        }
     }
 }
