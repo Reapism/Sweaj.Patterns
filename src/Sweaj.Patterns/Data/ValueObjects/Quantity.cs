@@ -2,8 +2,6 @@
 {
     public sealed class Quantity
     {
-        private readonly decimal _value;
-        private readonly string _unit;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Quantity"/> class.
@@ -12,8 +10,8 @@
         /// <param name="unit">The unit of the quantity.</param>
         private Quantity(decimal value, string unit)
         {
-            _value = value;
-            _unit = unit;
+            Value = value;
+            Unit = unit;
         }
 
         /// <summary>
@@ -40,16 +38,16 @@
         /// <summary>
         /// Gets the value of the quantity.
         /// </summary>
-        public decimal Value => _value;
+        public decimal Value { get; }
 
         /// <summary>
         /// Gets the unit of the quantity.
         /// </summary>
-        public string Unit => _unit;
+        public string Unit { get; }
 
         public override string ToString()
         {
-            return $"{_value} {_unit}";
+            return $"{Value} {Unit}";
         }
 
         public override bool Equals(object obj)
@@ -60,15 +58,12 @@
                 return false;
             }
 
-            return _value == other._value && _unit == other._unit;
+            return Value == other.Value && Unit == other.Unit;
         }
 
         public override int GetHashCode()
         {
-            var hashCode = -1405383098;
-            hashCode = hashCode * -1521134295 + _value.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(_unit);
-            return hashCode;
+            return HashCode.Combine(Value, Unit);
         }
     }
 }

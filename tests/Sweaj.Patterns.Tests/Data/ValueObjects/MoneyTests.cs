@@ -60,7 +60,7 @@ namespace Sweaj.Patterns.Tests.Data.ValueObjects
             var money1 = new Money(value1, currency, decimalPlaces);
             var money2 = new Money(value2, currency, decimalPlaces);
 
-            Assert.Throws<ArgumentException>(() => money1 - money2);
+            Assert.Throws<InvalidOperationException>(() => money1 - money2);
         }
 
         [Theory]
@@ -107,7 +107,8 @@ namespace Sweaj.Patterns.Tests.Data.ValueObjects
         }
 
         [Theory]
-        [InlineData(100, "USD", 2, "100.00")]
+        [InlineData(100, "USD", 2, "100.00 USD")]
+        [InlineData(200.50, "USD", 2, "200.50 USD")]
         public void Money_ToString_ShouldReturnFormattedString(decimal value, string currency, int decimalPlaces, string expectedString)
         {
             var money = new Money(value, currency, decimalPlaces);

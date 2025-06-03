@@ -1,5 +1,4 @@
 ﻿using Sweaj.Patterns.Data.Values;
-using System;
 using System.Globalization;
 
 namespace Sweaj.Patterns.Data.ValueObjects
@@ -39,10 +38,38 @@ namespace Sweaj.Patterns.Data.ValueObjects
         /// <param name="decimalPlaces">The number of decimal places.</param>
         public Money(decimal value, string currency, int decimalPlaces)
         {
-            Value = Guard.Against.Negative(value);
+            Value = Guard.Against.Negative(value, exceptionCreator: () => throw new InvalidOperationException("The amount of money cannot be negative itself."));
             Currency = currency ?? throw new ArgumentNullException(nameof(currency));
             DecimalPlaces = decimalPlaces >= 0 ? decimalPlaces : throw new ArgumentOutOfRangeException(nameof(decimalPlaces));
         }
+
+        #region Factory Methods
+
+        /// <summary>
+        /// Creates a <see cref="Money"/> instance from an <see cref="int"/>.
+        /// </summary>
+        public static Money FromInt(int value, string currency = DefaultCurrency, int decimalPlaces = DefaultDecimalPlaces) =>
+            new((decimal)value, currency, decimalPlaces);
+
+        /// <summary>
+        /// Creates a <see cref="Money"/> instance from a <see cref="decimal"/>.
+        /// </summary>
+        public static Money FromDecimal(decimal value, string currency = DefaultCurrency, int decimalPlaces = DefaultDecimalPlaces) =>
+            new(value, currency, decimalPlaces);
+
+        /// <summary>
+        /// Creates a <see cref="Money"/> instance from a <see cref="double"/>.
+        /// </summary>
+        public static Money FromDouble(double value, string currency = DefaultCurrency, int decimalPlaces = DefaultDecimalPlaces) =>
+            new(Convert.ToDecimal(value), currency, decimalPlaces);
+
+        /// <summary>
+        /// Creates a <see cref="Money"/> instance from a <see cref="float"/>.
+        /// </summary>
+        public static Money FromFloat(float value, string currency = DefaultCurrency, int decimalPlaces = DefaultDecimalPlaces) =>
+            new(Convert.ToDecimal(value), currency, decimalPlaces);
+
+        #endregion
 
         #region Operators
 
@@ -62,7 +89,7 @@ namespace Sweaj.Patterns.Data.ValueObjects
         /// <summary>
         /// Multiplies a <see cref="Money"/> instance by a scalar.
         /// </summary>
-        public static Money operator *(Money a, decimal b) => new Money(a.Value * b, a.Currency, a.DecimalPlaces);
+        public static Money operator *(Money a, decimal b) => new(a.Value * b, a.Currency, a.DecimalPlaces);
 
         /// <summary>
         /// Divides a <see cref="Money"/> instance by a scalar.
@@ -112,7 +139,7 @@ namespace Sweaj.Patterns.Data.ValueObjects
         /// <summary>
         /// Implicitly converts a <see cref="decimal"/> value to a <see cref="Money"/> instance with default currency and precision.
         /// </summary>
-        public static implicit operator Money(decimal value) => new Money(value, DefaultCurrency, DefaultDecimalPlaces);
+        public static implicit operator Money(decimal value) => new(value, DefaultCurrency, DefaultDecimalPlaces);
 
         #endregion
 
@@ -176,7 +203,7 @@ namespace Sweaj.Patterns.Data.ValueObjects
         {
             var rounded = System.Math.Round(Value, DecimalPlaces);
             var format = "N" + DecimalPlaces;
-            return string.Format(CultureInfo.InvariantCulture, "{0} {1}", Currency, rounded.ToString(format));
+            return string.Format(CultureInfo.InvariantCulture, "{0} {1}", rounded.ToString(format), Currency);
         }
 
         #endregion
