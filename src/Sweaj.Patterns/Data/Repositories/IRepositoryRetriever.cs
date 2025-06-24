@@ -4,33 +4,19 @@ using Sweaj.Patterns.Data.Entities;
 namespace Sweaj.Patterns.Data.Repositories
 {
     /// <summary>
-    /// Provides a mechanism for retrieving a <see cref="IRepository"/>
-    /// instance.
-    /// </summary>
-    [Trackable]
-    public interface IRepositoryRetriever
-    {
-        /// <summary>
-        /// Returns a <see cref="IRepository"/> instance.
-        /// </summary>
-        /// <returns></returns>
-        IRepository GetRepository();
-    }
-
-    /// <summary>
     /// Provides a mechanism for retrieving a <see cref="IRepository{TEntity}"/>
     /// instance.
     /// </summary>
     /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
     [Trackable]
-    public interface IRepositoryRetriever<TEntity>
-        where TEntity : Entity, IAggregateRoot
+    public interface IRepositoryRetriever
     {
         /// <summary>
         /// Returns a <see cref="IRepository{TEntity}"/> instance.
         /// </summary>
         /// <returns></returns>
-        IRepository<TEntity> GetRepository();
+        IRepository<TEntity> GetRepository<TEntity>()
+            where TEntity : Entity, IAggregateRoot;
     }
 
     /// <summary>
@@ -41,29 +27,15 @@ namespace Sweaj.Patterns.Data.Repositories
     /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
     [Trackable]
     public interface IRepositoryRetriever<TKey, TEntity>
-        where TKey : IEquatable<TKey>, new()
-        where TEntity : Entity<TKey>, IAggregateRoot
+
     {
         /// <summary>
         /// Returns a <see cref="IRepository{TKey, TEntity}"/> instance.
         /// </summary>
         /// <returns></returns>
-        IRepository<TKey, TEntity> GetRepository();
-    }
-
-    /// <summary>
-    /// Provides a mechanism for retrieving a <see cref="IReadOnlyRepository"/>
-    /// instance.
-    /// </summary>
-    /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
-    [Trackable]
-    public interface IReadOnlyRepositoryRetriever
-    {
-        /// <summary>
-        /// Returns a <see cref="IReadOnlyRepository"/> instance.
-        /// </summary>
-        /// <returns></returns>
-        IReadOnlyRepository GetReadOnlyRepository();
+        IRepository<TKey, TEntity> GetRepository<TKey, TEntity>()
+            where TKey : IEquatable<TKey>, new()
+            where TEntity : Entity<TKey>, IAggregateRoot;
     }
 
     /// <summary>
@@ -73,13 +45,13 @@ namespace Sweaj.Patterns.Data.Repositories
     /// <typeparam name="TEntity">An entity in an underlying store.</typeparam>
     [Trackable]
     public interface IReadOnlyRepositoryRetriever<TEntity>
-        where TEntity : Entity, IAggregateRoot
     {
         /// <summary>
         /// Returns a <see cref="IReadOnlyRepository{TEntity}"/> instance.
         /// </summary>
         /// <returns></returns>
-        IReadOnlyRepository<TEntity> GetReadOnlyRepository();
+        IReadOnlyRepository<TEntity> GetReadOnlyRepository<TEntity>()
+            where TEntity : Entity, IAggregateRoot;
     }
 
     /// <summary>
